@@ -1,24 +1,31 @@
 <template>
   <div class="contents">
-    <div class="toolbar">
-      <button>upload</button>
-    </div>
     <div class="list-view">
       <table>
         <thead>
           <tr>
             <th>
-              <input type="checkbox" @change="select_all()" v-model="selected_all" />
+              <input
+                type="checkbox"
+                @change="select_all()"
+                v-model="selected_all"
+              />
             </th>
             <th>ファイル名</th>
             <th>更新</th>
             <th>サイズ</th>
+            <th>ロック</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(item, index) in items" :key="index">
             <td>
-              <input type="checkbox" @change="select_change()" :value="item.id" v-model="selected_items" />
+              <input
+                type="checkbox"
+                @change="select_change()"
+                :value="item.id"
+                v-model="selected_items"
+              />
             </td>
             <td v-if="item.isfolder">
               <a :href="current_path + item.name">
@@ -32,6 +39,16 @@
             </td>
             <td>{{ item.updatedAt }}</td>
             <td>{{ item.size }}</td>
+            <td>{{ item.islocked }}</td>
+          </tr>
+          <tr
+            v-for="(item, index) in upload_queue"
+            :key="'upload-queue-' + index"
+          >
+            <td></td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.progress }}</td>
+            <td></td>
           </tr>
         </tbody>
       </table>
@@ -40,14 +57,14 @@
 </template>
 
 <script>
-import Mixin from '../mixin/mixin';
+import Mixin from "../mixin/mixin";
 
 export default {
   data() {
     return {
       items: [],
-      uploading_items: [],
-      current_path: '',
+      upload_queue: [],
+      current_path: "",
       selected_items: [],
       selected_all: false,
     };
@@ -59,24 +76,24 @@ export default {
     const receive_data = [
       {
         id: 1, //require, PK
-        name: 'test_item1', //require
-        updatedAt: '2021-12-08', //require
+        name: "test_item1", //require
+        updatedAt: "2021-12-08", //require
         size: 1,
         isfolder: false, //require
         islocked: false, //require
       },
       {
         id: 2,
-        name: 'test_item2', 
-        updatedAt: '2021-12-08',
+        name: "test_item2",
+        updatedAt: "2021-12-08",
         size: 1,
         isfolder: false,
         islocked: true,
       },
       {
         id: 3,
-        name: 'test_folder',
-        updatedAt: '2021-12-08',
+        name: "test_folder",
+        updatedAt: "2021-12-08",
         size: null,
         isfolder: true,
         islocked: false,
@@ -84,22 +101,42 @@ export default {
     ];
     this.items = receive_data;
 
-    this.current_path = this.get_path();
+    this.current_path = this.get_path() + "/";
+    this.upload_queue = this.upload_queue_getters;
+  },
+  computed: {
+    upload_queue_getters() {
+      return this.$store.getters.get_upload_queue;
+    },
+  },
+  watch: {
+    upload_queue: {
+      handler: function (value) {
+        this.upload_queue = value;
+
+        const fi = value.findIndex((e) => e.progress == 100);
+        if (fi >= 0) {
+          this.$store.commit("remove_upload_queue_mutation", {
+            id: value[fi].id,
+          });
+        }
+      },
+      deep: true,
+    },
   },
   methods: {
     select_all() {
-      if(this.selected_all) {
+      if (this.selected_all) {
         this.selected_items = this.items.map((a) => a.id);
-      }
-      else {
+      } else {
         this.selected_items = [];
       }
     },
     select_change() {
-      if(this.selected_all) {
+      if (this.selected_all) {
         this.selected_all = false;
       }
-    }
+    },
   },
 };
 </script>
