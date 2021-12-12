@@ -1,7 +1,6 @@
 <template>
   <div class="contents">
     <div class="list-view">
-      <button @click="test()">add</button>
       <table>
         <thead>
           <tr>
