@@ -1,6 +1,7 @@
 <template>
   <div class="contents">
     <div class="list-view">
+      <button @click="test()">add</button>
       <table>
         <thead>
           <tr>
@@ -71,41 +72,11 @@ export default {
   },
   mixins: [Mixin],
   mounted() {
-    //get_itemlist()
-    //test data
-    const receive_data = [
-      {
-        id: 1, //require, PK
-        name: "test_item1", //require
-        updatedAt: "2021-12-08", //require
-        size: 1,
-        isfolder: false, //require
-        islocked: false, //require
-      },
-      {
-        id: 2,
-        name: "test_item2",
-        updatedAt: "2021-12-08",
-        size: 1,
-        isfolder: false,
-        islocked: true,
-      },
-      {
-        id: 3,
-        name: "test_folder",
-        updatedAt: "2021-12-08",
-        size: null,
-        isfolder: true,
-        islocked: false,
-      },
-    ];
-    this.$store.commit("set_itemlist_mutation", {
-      items: receive_data,
-    });
-    this.items = this.itemlist_getters;
-
     this.current_path = this.get_path() + "/";
     this.upload_queue = this.upload_queue_getters;
+
+    this.items = this.itemlist_getters;
+    this.get_itemlist(this.current_path);
   },
   computed: {
     itemlist_getters() {
@@ -116,11 +87,8 @@ export default {
     },
   },
   watch: {
-    items: {
-      handler: function (value) {
-        this.items = value;
-      },
-      deep: true,
+    itemlist_getters() {
+      this.items = this.itemlist_getters;
     },
     upload_queue: {
       handler: function (value) {
@@ -129,7 +97,7 @@ export default {
         const fi = value.findIndex((e) => e.progress == 100);
         if (fi >= 0) {
           //upload completed
-          //get_itemlist()
+          this.get_itemlist(this.current_path);
           this.$store.commit("remove_upload_queue_mutation", {
             id: value[fi].id,
           });

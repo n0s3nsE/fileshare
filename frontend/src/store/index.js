@@ -43,7 +43,6 @@ export default new Vuex.Store({
         },
         remove_upload_queue_mutation(state, payload) {
             state.upload_queue.splice(state.upload_queue.findIndex((e) => e.id == payload.id), 1);
-            console.log(state.upload_queue)
         },
         selected_items_mutation(state, payload) {
             state.selected_items = payload.items;
