@@ -1,17 +1,20 @@
 <template>
   <div class="toolbar">
-    <upload />
-    <create />
+    <upload-button />
+    <create-button />
+    <delete-button />
   </div>
 </template>
 <script>
-import upload from "./UploadComponent.vue";
-import create from "./CreateComponent.vue";
+import UploadButton from "./UploadComponent.vue";
+import CreateButton from "./CreateComponent.vue";
+import DeleteButton from "./DeleteComponent.vue";
 
 export default {
   components: {
-    upload,
-    create,
+    UploadButton,
+    CreateButton,
+    DeleteButton,
   },
 };
 </script>

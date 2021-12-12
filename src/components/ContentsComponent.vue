@@ -71,7 +71,7 @@ export default {
   },
   mixins: [Mixin],
   mounted() {
-    //axios
+    //get_itemlist()
     //test data
     const receive_data = [
       {
@@ -99,29 +99,48 @@ export default {
         islocked: false,
       },
     ];
-    this.items = receive_data;
+    this.$store.commit("set_itemlist_mutation", {
+      items: receive_data,
+    });
+    this.items = this.itemlist_getters;
 
     this.current_path = this.get_path() + "/";
     this.upload_queue = this.upload_queue_getters;
   },
   computed: {
+    itemlist_getters() {
+      return this.$store.getters.get_itemlist;
+    },
     upload_queue_getters() {
       return this.$store.getters.get_upload_queue;
     },
   },
   watch: {
+    items: {
+      handler: function (value) {
+        this.items = value;
+      },
+      deep: true,
+    },
     upload_queue: {
       handler: function (value) {
         this.upload_queue = value;
 
         const fi = value.findIndex((e) => e.progress == 100);
         if (fi >= 0) {
+          //upload completed
+          //get_itemlist()
           this.$store.commit("remove_upload_queue_mutation", {
             id: value[fi].id,
           });
         }
       },
       deep: true,
+    },
+    selected_items: function () {
+      this.$store.commit("selected_items_mutation", {
+        items: this.selected_items,
+      });
     },
   },
   methods: {
