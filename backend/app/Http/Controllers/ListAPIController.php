@@ -28,14 +28,17 @@ class ListAPIController extends Controller
         }
     }
 
-    public function edit($id)
+    public function update(Request $request)
     {
-        //
-    }
+        $rq = $request;
+        if ($rq->id == null || !isset($rq->new_name)) {
+            return response(json_encode(['msg' => 'error']), 500);
+        }
 
-    public function update(Request $request, $id)
-    {
-        //
+        $ct = Content::find($rq->id);
+        $ct->name = $rq->new_name;
+        $ct->save();
+        return response(json_encode(['msg' => 'success']), 200);
     }
 
     public function destroy(Request $request)

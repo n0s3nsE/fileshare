@@ -16,3 +16,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::get("/api/show/{any?}", [ListAPIController::class, "show"])->where("any", ".*");
 Route::post("/api/delete", [ListAPIController::class, "destroy"]);
+Route::post("/api/rename", [ListAPIController::class, "update"]);
