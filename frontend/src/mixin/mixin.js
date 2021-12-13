@@ -16,6 +16,9 @@ export default {
         .then(function(response){
           this.set_itemlist(response.data.itemlist);
         }.bind(this));
+        this.$store.commit("selected_items_mutation", {
+          items: [],
+        })
     },
     set_itemlist(items) {
       this.$store.commit("set_itemlist_mutation", {

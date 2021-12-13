@@ -1,7 +1,7 @@
 <template>
   <div class="contents">
     <div class="list-view">
-      <table>
+      <table v-if="items">
         <thead>
           <tr>
             <th>
@@ -31,11 +31,13 @@
               <a :href="current_path + item.name">
                 {{ item.name }}
               </a>
+              <rename-text-box v-if="rename_flag === item.id" />
             </td>
             <td v-else>
               <a :href="'/content' + current_path + item.name">
                 {{ item.name }}
               </a>
+              <rename-text-box v-if="rename_flag === item.id" />
             </td>
             <td>{{ item.updatedAt }}</td>
             <td>{{ item.size }}</td>
@@ -52,14 +54,21 @@
           </tr>
         </tbody>
       </table>
+      <div v-else>
+        <span>空のフォルダ</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import Mixin from "../mixin/mixin";
+import RenameTextBox from "./tools/RenameComponent.vue";
 
 export default {
+  components: {
+    RenameTextBox,
+  },
   data() {
     return {
       items: [],
@@ -67,6 +76,7 @@ export default {
       current_path: "",
       selected_items: [],
       selected_all: false,
+      rename_flag: null,
     };
   },
   mixins: [Mixin],
@@ -75,6 +85,7 @@ export default {
     this.upload_queue = this.upload_queue_getters;
 
     this.items = this.itemlist_getters;
+    this.selected_items = this.selected_items_getters;
     this.get_itemlist(this.current_path);
   },
   computed: {
@@ -83,6 +94,12 @@ export default {
     },
     upload_queue_getters() {
       return this.$store.getters.get_upload_queue;
+    },
+    rename_flag_getters() {
+      return this.$store.getters.get_rename_flag;
+    },
+    selected_items_getters() {
+      return this.$store.getters.get_selected_items;
     },
   },
   watch: {
@@ -104,10 +121,16 @@ export default {
       },
       deep: true,
     },
-    selected_items: function () {
+    selected_items() {
       this.$store.commit("selected_items_mutation", {
         items: this.selected_items,
       });
+    },
+    selected_items_getters(value) {
+      this.selected_items = value;
+    },
+    rename_flag_getters(value) {
+      this.rename_flag = value;
     },
   },
   methods: {
