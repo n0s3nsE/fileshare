@@ -22,6 +22,7 @@ export default new Vuex.Store({
         itemlist: [],
         upload_queue: [],
         selected_items: [],
+        rename_flag: null,
     },
     getters: {
         get_itemlist: state => {
@@ -32,6 +33,9 @@ export default new Vuex.Store({
         },
         get_selected_items: state => {
             return state.selected_items;
+        },
+        get_rename_flag: state => {
+            return state.rename_flag;
         }
     },
     mutations: {
@@ -47,6 +51,10 @@ export default new Vuex.Store({
         selected_items_mutation(state, payload) {
             state.selected_items = payload.items;
         },
+        rename_flag_mutation(state, payload) {
+            state.rename_flag = payload.id;
+        },
+        //upload progress test func
         test(state){
             state.upload_queue[0].progress = 100;
         }

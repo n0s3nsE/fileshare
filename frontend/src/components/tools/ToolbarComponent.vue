@@ -10,7 +10,7 @@
 import UploadButton from "./UploadComponent.vue";
 import CreateButton from "./CreateComponent.vue";
 import DeleteButton from "./DeleteComponent.vue";
-import RenameButton from "./RenameComponent.vue";
+import RenameButton from "./RenameButtonComponent.vue";
 
 export default {
   components: {
