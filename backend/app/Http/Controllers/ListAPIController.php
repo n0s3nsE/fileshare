@@ -39,12 +39,12 @@ class ListAPIController extends Controller
 
     public function destroy(Request $request)
     {
-        $rq = $request;
-        if ($rq->delete_items == []) {
+        $delete_items = $request->delete_items;
+        if ($delete_items == []) {
             return response(json_encode(['msg' => 'error']), 500);
         }
 
-        foreach ($rq->delete_items as $i) {
+        foreach ($delete_items as $i) {
             Content::where("id", $i)->delete();
         }
         return response(json_encode(['msg' => 'success']), 200);
