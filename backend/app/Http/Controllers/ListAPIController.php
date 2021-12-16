@@ -4,18 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Content;
+use Illuminate\Support\Facades\Storage;
+
+use function PHPUnit\Framework\isEmpty;
 
 class ListAPIController extends Controller
 {
-    public function create()
-    {
-        //
-    }
 
-    public function store(Request $request)
-    {
-        //
-    }
 
     public function show($id = "")
     {
@@ -52,5 +47,51 @@ class ListAPIController extends Controller
             Content::where("id", $i)->delete();
         }
         return response(json_encode(['msg' => 'success']), 200);
+    }
+
+    public function store(Request $request)
+    {
+        $name = $request->name;
+        $path = $request->path;
+        $data = $request->data;
+
+        $content = new Content();
+
+        if ($path == "/") {
+            $parent_folder_path = "/";
+
+            Storage::put('uploads/', $data);
+            $content->fill([
+                'name' => $name,
+                'size' => 0,
+                'isfolder' => false,
+                'path' => $path,
+                'islocked' => false,
+                'created_at' => null,
+                'updated_at' => null
+            ])->save();
+            return response(json_encode(['msg' => 'success']), 200);
+        } else {
+            $parent_folder_name = mb_substr($path, mb_strrpos($path, '/') + 1, mb_strlen($path));
+            $parent_folder_path = mb_substr($path, 0, mb_strrpos($path, '/') + 1);
+            if ($content->where('name', $parent_folder_name)->where('isfolder', true)->where('path', $parent_folder_path)->exists()) {
+                Storage::put('uploads/', $data);
+                $content->fill([
+                    'name' => $name,
+                    'size' => 0,
+                    'isfolder' => false,
+                    'path' => $path,
+                    'islocked' => false,
+                    'created_at' => null,
+                    'updated_at' => null
+                ])->save();
+                return response(json_encode(['msg' => 'success']), 200);
+            } else {
+                return response(json_encode(['msg' => 'not exists folder: ' . $path]), 500);
+            }
+        }
+    }
+    public function chunk_upload(Request $request)
+    {
     }
 }

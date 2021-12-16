@@ -16,12 +16,17 @@
   </div>
 </template>
 <script>
+import axios from "axios";
+import Mixin from "../../mixin/mixin";
+
 export default {
   data() {
     return {
       files: [],
+      upload_api_url: "http://127.0.0.1:8000/api/upload",
     };
   },
+  mixins: [Mixin],
   methods: {
     file_change() {
       this.files = this.$refs.upload_files.files;
@@ -37,9 +42,24 @@ export default {
           },
         });
       }
+      this.file_upload();
     },
-    test() {
-      this.$store.commit("test");
+    file_upload() {
+      for (let i = 0; i < this.files.length; i++) {
+        const formData = new FormData();
+        formData.append("name", this.files[i].name);
+        formData.append("path", this.get_path());
+        formData.append("data", this.files[i]);
+
+        axios.post(this.upload_api_url, formData).then(() => {
+          this.$store.commit("update_progress", {
+            item: {
+              id: i,
+              progress: 100,
+            },
+          });
+        });
+      }
     },
   },
 };
