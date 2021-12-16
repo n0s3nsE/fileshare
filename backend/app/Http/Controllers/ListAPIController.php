@@ -7,15 +7,7 @@ use App\Models\Content;
 
 class ListAPIController extends Controller
 {
-    public function create()
-    {
-        //
-    }
 
-    public function store(Request $request)
-    {
-        //
-    }
 
     public function show($id = "")
     {
@@ -52,5 +44,29 @@ class ListAPIController extends Controller
             Content::where("id", $i)->delete();
         }
         return response(json_encode(['msg' => 'success']), 200);
+    }
+
+    public function store(Request $request)
+    {
+        $name = $request->name;
+        $path = $request->path;
+        //$data = $request->data;
+
+        $content = new Content();
+
+        $content->fill([
+            'name' => $name,
+            'size' => 0,
+            'isfolder' => false,
+            'path' => $path,
+            'islocked' => false,
+            'created_at' => null,
+            'updated_at' => null
+        ])->save();
+
+        return response(json_encode(['msg' => 'success']), 200);
+    }
+    public function chunk_upload(Request $request)
+    {
     }
 }

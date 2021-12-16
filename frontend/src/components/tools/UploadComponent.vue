@@ -16,12 +16,17 @@
   </div>
 </template>
 <script>
+import axios from "axios";
+import Mixin from "../../mixin/mixin";
+
 export default {
   data() {
     return {
       files: [],
+      upload_api_url: "http://127.0.0.1:8000/api/upload",
     };
   },
+  mixins: [Mixin],
   methods: {
     file_change() {
       this.files = this.$refs.upload_files.files;
@@ -35,6 +40,16 @@ export default {
             name: this.files[i].name,
             progress: 0,
           },
+        });
+      }
+      this.file_upload();
+    },
+    file_upload() {
+      for (let i = 0; i < this.files.length; i++) {
+        axios.post(this.upload_api_url, {
+          name: this.files[i].name,
+          path: this.get_path(),
+          data: this.files[i],
         });
       }
     },
