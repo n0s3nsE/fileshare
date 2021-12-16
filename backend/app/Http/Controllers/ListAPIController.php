@@ -61,7 +61,7 @@ class ListAPIController extends Controller
         if ($path == "/") {
             $parent_folder_path = "/";
 
-            Storage::put('uploads/', $data);
+            Storage::putFileAs('uploads' . $path, $data, $name);
             $content->fill([
                 'name' => $name,
                 'size' => 0,
@@ -76,7 +76,7 @@ class ListAPIController extends Controller
             $parent_folder_name = mb_substr($path, mb_strrpos($path, '/') + 1, mb_strlen($path));
             $parent_folder_path = mb_substr($path, 0, mb_strrpos($path, '/') + 1);
             if ($content->where('name', $parent_folder_name)->where('isfolder', true)->where('path', $parent_folder_path)->exists()) {
-                Storage::put('uploads/', $data);
+                Storage::putFileAs('uploads' . $path, $data, $name);
                 $content->fill([
                     'name' => $name,
                     'size' => 0,
