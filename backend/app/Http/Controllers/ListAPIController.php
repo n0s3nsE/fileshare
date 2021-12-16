@@ -25,14 +25,15 @@ class ListAPIController extends Controller
 
     public function update(Request $request)
     {
-        $rq = $request;
-        if ($rq->id == null || !isset($rq->new_name)) {
+        $id = $request->id;
+        $new_name = $request->new_name;
+
+        if ($id == null || !isset($new_name)) {
             return response(json_encode(['msg' => 'error']), 500);
         }
 
-        $ct = Content::find($rq->id);
-        $ct->name = $rq->new_name;
-        $ct->save();
+        $ct = Content::find($id);
+        $ct->fill(['name' => $new_name])->save();
         return response(json_encode(['msg' => 'success']), 200);
     }
 
