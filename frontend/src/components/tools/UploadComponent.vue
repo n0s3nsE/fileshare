@@ -51,11 +51,15 @@ export default {
         formData.append("path", this.get_path());
         formData.append("data", this.files[i]);
 
-        axios.post(this.upload_api_url, formData);
+        axios.post(this.upload_api_url, formData).then(() => {
+          this.$store.commit("update_progress", {
+            item: {
+              id: i,
+              progress: 100,
+            },
+          });
+        });
       }
-    },
-    test() {
-      this.$store.commit("test");
     },
   },
 };

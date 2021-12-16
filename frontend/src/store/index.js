@@ -54,9 +54,12 @@ export default new Vuex.Store({
         rename_flag_mutation(state, payload) {
             state.rename_flag = payload.id;
         },
-        //upload progress test func
-        test(state){
-            state.upload_queue[0].progress = 100;
+        update_progress(state, payload){
+            for(let i = 0; i < state.upload_queue.length; i++){
+                if(state.upload_queue[i].id === payload.item.id){
+                    state.upload_queue[i].progress = payload.item.progress;
+                } 
+            }
         }
     },
 });
