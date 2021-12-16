@@ -46,11 +46,12 @@ export default {
     },
     file_upload() {
       for (let i = 0; i < this.files.length; i++) {
-        axios.post(this.upload_api_url, {
-          name: this.files[i].name,
-          path: this.get_path(),
-          data: this.files[i],
-        });
+        const formData = new FormData();
+        formData.append("name", this.files[i].name);
+        formData.append("path", this.get_path());
+        formData.append("data", this.files[i]);
+
+        axios.post(this.upload_api_url, formData);
       }
     },
     test() {

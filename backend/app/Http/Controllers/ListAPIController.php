@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Content;
+use Illuminate\Support\Facades\Storage;
+
+use function PHPUnit\Framework\isEmpty;
 
 class ListAPIController extends Controller
 {
@@ -50,21 +53,25 @@ class ListAPIController extends Controller
     {
         $name = $request->name;
         $path = $request->path;
-        //$data = $request->data;
+        $data = $request->data;
 
         $content = new Content();
+        if ($content->where('path', $path)->exists()) {
+            Storage::put('uploads/', $data);
+            $content->fill([
+                'name' => $name,
+                'size' => 0,
+                'isfolder' => false,
+                'path' => $path,
+                'islocked' => false,
+                'created_at' => null,
+                'updated_at' => null
+            ])->save();
 
-        $content->fill([
-            'name' => $name,
-            'size' => 0,
-            'isfolder' => false,
-            'path' => $path,
-            'islocked' => false,
-            'created_at' => null,
-            'updated_at' => null
-        ])->save();
-
-        return response(json_encode(['msg' => 'success']), 200);
+            return response(json_encode(['msg' => 'success']), 200);
+        } else {
+            return response(json_encode(['msg' => 'not exists folder: ' . $path]), 500);
+        }
     }
     public function chunk_upload(Request $request)
     {
