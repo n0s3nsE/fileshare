@@ -14,16 +14,10 @@ class ListAPIController extends Controller
     {
         $contents = Content::select("id", "name", "size", "isfolder", "islocked")->where("path", "/" . $id);
 
-        if ($id != "") {
-            if (pathinfo($id)["dirname"] == ".") {
-                $dirname = "/";
-            } else {
-                $dirname = "/" . pathinfo($id)["dirname"];
-            }
-            if (!Content::where("name", pathinfo($id)["basename"])->where("path", $dirname)->where("isfolder", true)->exists()) {
-                return response(json_encode(['msg' => 'not exists folder']), 404);
-            }
+        if (!$this->check_folder_exists($id)) {
+            return response(json_encode(['msg' => 'not exists folder']), 404);
         }
+
         if ($contents->get()->isEmpty()) {
             return response("", 204);
         } else {
@@ -64,12 +58,11 @@ class ListAPIController extends Controller
         $path = $request->path;
         $data = $request->data;
 
-        $name = $this->rename_same_name($name, $path);
+        if ($this->check_folder_exists(substr($path, 1))) {
 
-        $content = new Content();
+            $name = $this->rename_same_name($name, $path);
 
-        if ($path == "/") {
-            $parent_folder_path = "/";
+            $content = new Content();
 
             Storage::putFileAs('uploads' . $path, $data, $name);
             $content->fill([
@@ -83,24 +76,7 @@ class ListAPIController extends Controller
             ])->save();
             return response(json_encode(['msg' => 'success']), 200);
         } else {
-            $parent_folder_name = mb_substr($path, mb_strrpos($path, '/') + 1, mb_strlen($path));
-            $parent_folder_path = mb_substr($path, 0, mb_strrpos($path, '/') + 1);
-
-            if ($content->where('name', $parent_folder_name)->where('isfolder', true)->where('path', $parent_folder_path)->exists()) {
-                Storage::putFileAs('uploads' . $path, $data, $name);
-                $content->fill([
-                    'name' => $name,
-                    'size' => 0,
-                    'isfolder' => false,
-                    'path' => $path,
-                    'islocked' => false,
-                    'created_at' => null,
-                    'updated_at' => null
-                ])->save();
-                return response(json_encode(['msg' => 'success']), 200);
-            } else {
-                return response(json_encode(['msg' => 'not exists folder: ' . $path]), 500);
-            }
+            return response(json_encode(['msg' => 'not exists folder: ' . $path]), 500);
         }
     }
     public function chunk_upload(Request $request)
@@ -120,5 +96,20 @@ class ListAPIController extends Controller
         }
 
         return $name;
+    }
+
+    public function check_folder_exists($path)
+    {
+        if ($path != "") {
+            if (pathinfo($path)["dirname"] == ".") {
+                $dirname = "/";
+            } else {
+                $dirname = "/" . pathinfo($path)["dirname"];
+            }
+            if (!Content::where("name", pathinfo($path)["basename"])->where("path", $dirname)->where("isfolder", true)->exists()) {
+                return false;
+            }
+        }
+        return true;
     }
 }
