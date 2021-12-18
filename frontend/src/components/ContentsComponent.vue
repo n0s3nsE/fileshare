@@ -1,7 +1,11 @@
 <template>
   <div class="contents">
     <div class="list-view">
-      <table v-if="items">
+      <div v-if="empty_folder">
+        <span>空のフォルダ</span>
+      </div>
+      <div v-else-if="not_exists_folder">存在しないフォルダ</div>
+      <table v-else>
         <thead>
           <tr>
             <th>
@@ -54,9 +58,6 @@
           </tr>
         </tbody>
       </table>
-      <div v-else>
-        <span>空のフォルダ</span>
-      </div>
     </div>
   </div>
 </template>
@@ -77,6 +78,8 @@ export default {
       selected_items: [],
       selected_all: false,
       rename_flag: null,
+      empty_folder: false,
+      not_exists_folder: false,
     };
   },
   mixins: [Mixin],
@@ -105,6 +108,14 @@ export default {
   watch: {
     itemlist_getters() {
       this.items = this.itemlist_getters;
+      if (this.items === undefined) {
+        this.empty_folder = true;
+      } else if (this.items[0].iserror) {
+        this.not_exists_folder = true;
+      } else {
+        this.empty_folder = false;
+        this.not_exists_folder = false;
+      }
     },
     upload_queue: {
       handler: function (value) {

@@ -17,7 +17,18 @@ export default {
       axios.get(this.show_api_url + folder)
         .then(function(response){
           this.set_itemlist(response.data.itemlist);
+        }.bind(this))
+        .catch(function(error){
+          this.set_itemlist([{
+            id: 0,
+            name: error.response.data.msg,
+            iserror: true
+          }]);
+          this.$store.commit("toolbar_status_mutation", {
+            stat: false,
+          });
         }.bind(this));
+
         this.$store.commit("selected_items_mutation", {
           items: [],
         })
