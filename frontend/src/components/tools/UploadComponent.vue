@@ -1,6 +1,6 @@
 <template>
   <div class="toolbar-upload">
-    <button>
+    <button v-bind:disabled="!status">
       <label for="file-open">アップロード</label>
       <input
         type="file"
@@ -10,9 +10,9 @@
         @change="file_change()"
         style="display: none"
         ref="upload_files"
+        v-bind:disabled="!status"
       />
     </button>
-    <button @click="test()">test</button>
   </div>
 </template>
 <script>
@@ -24,9 +24,23 @@ export default {
     return {
       files: [],
       upload_api_url: "http://127.0.0.1:8000/api/upload",
+      status: true,
     };
   },
   mixins: [Mixin],
+  computed: {
+    toolbar_status_getters() {
+      return this.$store.getters.get_toolbar_status;
+    },
+  },
+  watch: {
+    toolbar_status_getters(value) {
+      this.status = value;
+    },
+  },
+  mounted() {
+    console.log(this.status);
+  },
   methods: {
     file_change() {
       this.files = this.$refs.upload_files.files;

@@ -14,9 +14,17 @@ class ListAPIController extends Controller
     {
         $contents = Content::select("id", "name", "size", "isfolder", "islocked")->where("path", "/" . $id);
 
-        if (!$contents->exists()) {
-            return response(json_encode(['msg' => 'not exists folder']), 404);
-        } else if ($contents->get()->isEmpty()) {
+        if ($id != "") {
+            if (pathinfo($id)["dirname"] == ".") {
+                $dirname = "/";
+            } else {
+                $dirname = "/" . pathinfo($id)["dirname"];
+            }
+            if (!Content::where("name", pathinfo($id)["basename"])->where("path", $dirname)->where("isfolder", true)->exists()) {
+                return response(json_encode(['msg' => 'not exists folder']), 404);
+            }
+        }
+        if ($contents->get()->isEmpty()) {
             return response("", 204);
         } else {
             return response(json_encode(array("itemlist" => $contents->get())), 200);
