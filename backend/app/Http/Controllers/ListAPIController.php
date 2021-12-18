@@ -7,7 +7,6 @@ use App\Models\Content;
 use Exception;
 use Illuminate\Support\Facades\Storage;
 
-use function PHPUnit\Framework\isEmpty;
 
 class ListAPIController extends Controller
 {
@@ -40,7 +39,9 @@ class ListAPIController extends Controller
             return response(json_encode(['msg' => 'error']), 500);
         }
 
+        Storage::move('uploads' . $ct->path . '/' . $ct->name, 'uploads' . $ct->path . '/' . $new_name);
         $ct->fill(['name' => $new_name])->save();
+
         return response(json_encode(['msg' => 'success']), 200);
     }
 
@@ -55,7 +56,24 @@ class ListAPIController extends Controller
 
         foreach ($delete_items as $i) {
             try {
-                Content::where("id", $i)->delete();
+                $delcontent = Content::find($i);
+
+                if ($delcontent->isfolder) {
+                    //Storage::deleteDirectory('uploads' . $delcontent->path . '/' . $delcontent->name);
+                    Content::where('id', $delcontent->id)->delete();
+
+                    $delpath = "";
+                    if ($delcontent->path == "/") {
+                        $delpath = "/" . $delcontent->name;
+                    } else {
+                        $delpath = $delcontent->path . "/" . $delcontent->name;
+                    }
+
+                    return response($this->delete_child_record($delpath), 200);
+                } else {
+                    Storage::delete('uploads' . $delcontent->path . '/' . $delcontent->name);
+                }
+                Content::where('id', $i)->delete();
             } catch (Exception $e) {
                 array_push($error_items_id, $i);
             }
@@ -66,6 +84,21 @@ class ListAPIController extends Controller
         } else {
             return response(json_encode(['msg' => 'success']), 200);
         }
+    }
+
+    public function delete_child_record($del_rec)
+    {
+        $child_folder = Content::where('path', $del_rec)->where('isfolder', true)->get();
+        foreach ($child_folder as $i) {
+            $path = $i->path . '/' . $i->name;
+            Content::select('id')->where('path', $path)->where('isfolder', false)->delete();
+            if (Content::where('path', $path)->where('isfolder', true)->exists()) {
+                // /folder1/folder2
+                $this->delete_child_record($path);
+            }
+        }
+        Content::select('id')->where('path', $del_rec)->where('isfolder', false)->delete();
+        Content::where('path', $del_rec)->where('isfolder', true)->delete();
     }
 
     public function store(Request $request)
