@@ -59,7 +59,7 @@ class ListAPIController extends Controller
                 $delcontent = Content::find($i);
 
                 if ($delcontent->isfolder) {
-                    //Storage::deleteDirectory('uploads' . $delcontent->path . '/' . $delcontent->name);
+                    Storage::deleteDirectory('uploads' . $delcontent->path . '/' . $delcontent->name);
                     Content::where('id', $delcontent->id)->delete();
 
                     $delpath = "";
