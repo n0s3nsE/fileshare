@@ -38,9 +38,6 @@ export default {
       this.status = value;
     },
   },
-  mounted() {
-    console.log(this.status);
-  },
   methods: {
     file_change() {
       this.files = this.$refs.upload_files.files;
