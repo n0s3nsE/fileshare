@@ -12,6 +12,8 @@ export default {
     },
     //api
     get_itemlist(folder) {
+      folder = folder.replace(/\/*$/, "");
+      
       axios.get(this.show_api_url + folder)
         .then(function(response){
           this.set_itemlist(response.data.itemlist);
