@@ -116,6 +116,7 @@ export default {
         this.empty_folder = false;
         this.not_exists_folder = false;
       }
+      this.selected_all = false;
     },
     upload_queue: {
       handler: function (value) {
