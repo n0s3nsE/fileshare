@@ -56,6 +56,8 @@ class ListAPIController extends Controller
         $path = $request->path;
         $data = $request->data;
 
+        $name = $this->rename_same_name($name, $path);
+
         $content = new Content();
 
         if ($path == "/") {
@@ -75,6 +77,7 @@ class ListAPIController extends Controller
         } else {
             $parent_folder_name = mb_substr($path, mb_strrpos($path, '/') + 1, mb_strlen($path));
             $parent_folder_path = mb_substr($path, 0, mb_strrpos($path, '/') + 1);
+
             if ($content->where('name', $parent_folder_name)->where('isfolder', true)->where('path', $parent_folder_path)->exists()) {
                 Storage::putFileAs('uploads' . $path, $data, $name);
                 $content->fill([
@@ -94,5 +97,20 @@ class ListAPIController extends Controller
     }
     public function chunk_upload(Request $request)
     {
+    }
+
+    public function rename_same_name($name, $path)
+    {
+        //split filename
+        $filename = pathinfo($name)['filename'];
+        $ext = pathinfo($name)['extension'];
+        $index = 1;
+
+        while (Content::where('path', $path)->where('name', $name)->exists()) {
+            $name = $filename . "({$index})." . $ext;
+            $index += 1;
+        }
+
+        return $name;
     }
 }
