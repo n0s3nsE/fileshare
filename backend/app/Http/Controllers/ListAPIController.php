@@ -10,16 +10,16 @@ use function PHPUnit\Framework\isEmpty;
 
 class ListAPIController extends Controller
 {
-
-
     public function show($id = "")
     {
-        $contents = Content::select("id", "name", "size", "isfolder", "islocked")->where("path", "/" . $id)->get();
-        if ($contents->isEmpty()) {
+        $contents = Content::select("id", "name", "size", "isfolder", "islocked")->where("path", "/" . $id);
+
+        if (!$contents->exists()) {
+            return response(json_encode(['msg' => 'not exists folder']), 404);
+        } else if ($contents->get()->isEmpty()) {
             return response("", 204);
         } else {
-
-            return response(json_encode(array("itemlist" => $contents)), 200);
+            return response(json_encode(array("itemlist" => $contents->get())), 200);
         }
     }
 
