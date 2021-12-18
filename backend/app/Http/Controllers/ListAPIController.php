@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Content;
+use Exception;
 use Illuminate\Support\Facades\Storage;
 
 use function PHPUnit\Framework\isEmpty;
@@ -35,6 +36,10 @@ class ListAPIController extends Controller
         }
 
         $ct = Content::find($id);
+        if ($ct === null) {
+            return response(json_encode(['msg' => 'error']), 500);
+        }
+
         $ct->fill(['name' => $new_name])->save();
         return response(json_encode(['msg' => 'success']), 200);
     }
@@ -42,14 +47,25 @@ class ListAPIController extends Controller
     public function destroy(Request $request)
     {
         $delete_items = $request->delete_items;
+        $error_items_id = [];
+
         if ($delete_items == []) {
             return response(json_encode(['msg' => 'error']), 500);
         }
 
         foreach ($delete_items as $i) {
-            Content::where("id", $i)->delete();
+            try {
+                Content::where("id", $i)->delete();
+            } catch (Exception $e) {
+                array_push($error_items_id, $i);
+            }
         }
-        return response(json_encode(['msg' => 'success']), 200);
+
+        if ($error_items_id != []) {
+            return response(json_encode(['msg' => 'delete failed', 'id' => $error_items_id]), 500);
+        } else {
+            return response(json_encode(['msg' => 'success']), 200);
+        }
     }
 
     public function store(Request $request)
@@ -109,6 +125,14 @@ class ListAPIController extends Controller
             if (!Content::where("name", pathinfo($path)["basename"])->where("path", $dirname)->where("isfolder", true)->exists()) {
                 return false;
             }
+        }
+        return true;
+    }
+
+    public function check_file_exists($filename, $path)
+    {
+        if (!Content::where("name", $filename)->where("path", $path)->where("isfolder", false)->exists()) {
+            return false;
         }
         return true;
     }
