@@ -33,7 +33,7 @@ export default {
       this.$store.commit("rename_flag_mutation", {
         id: null,
       });
-      await this.get_itemlist(this.get_path() + "/");
+      await this.get_itemlist(this.get_path());
     },
   },
 };

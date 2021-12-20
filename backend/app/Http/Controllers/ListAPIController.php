@@ -132,6 +132,29 @@ class ListAPIController extends Controller
     {
     }
 
+    public function create(Request $request)
+    {
+        $new_folder_name = $request->new_folder_name;
+        $path = $request->path;
+
+        if ($this->check_folder_exists(substr($path, 1))) {
+            Storage::makeDirectory("uploads/" . $path . "/" . $new_folder_name);
+            $content = new Content();
+            $content->fill([
+                'name' => $new_folder_name,
+                'size' => 0,
+                'isfolder' => true,
+                'path' => $path,
+                'islocked' => false,
+                'created_at' => null,
+                'updated_at' => null
+            ])->save();
+            return response(json_encode(['msg' => 'success']), 200);
+        } else {
+            return response(json_encode(['msg' => 'not exists folder: ' . $path]), 500);
+        }
+    }
+
     public function rename_same_name($name, $path)
     {
         //split filename
