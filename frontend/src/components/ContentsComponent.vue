@@ -84,7 +84,11 @@ export default {
   },
   mixins: [Mixin],
   mounted() {
-    this.current_path = this.get_path() + "/";
+    if (this.get_path() === "/") {
+      this.current_path = this.get_path();
+    } else {
+      this.current_path = this.get_path() + "/";
+    }
     this.upload_queue = this.upload_queue_getters;
 
     this.items = this.itemlist_getters;
