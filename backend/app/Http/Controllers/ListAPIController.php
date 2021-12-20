@@ -30,7 +30,7 @@ class ListAPIController extends Controller
         $id = $request->id;
         $new_name = $request->new_name;
 
-        if ($id == null || !isset($new_name)) {
+        if ($id == null || $new_name == "") {
             return response(json_encode(['msg' => 'error']), 500);
         }
 
@@ -105,6 +105,10 @@ class ListAPIController extends Controller
         $path = $request->path;
         $data = $request->data;
 
+        if ($name == "" || $path == "") {
+            return response(['msg' => 'error'], 500);
+        }
+
         if ($this->check_folder_exists(substr($path, 1))) {
 
             $name = $this->rename_same_name($name, $path);
@@ -134,6 +138,10 @@ class ListAPIController extends Controller
     {
         $new_folder_name = $request->new_folder_name;
         $path = $request->path;
+
+        if ($new_folder_name == "" || $path == "") {
+            return response(['msg' => 'error'], 500);
+        }
 
         if ($this->check_folder_exists(substr($path, 1))) {
             Storage::makeDirectory("uploads/" . $path . "/" . $new_folder_name);
