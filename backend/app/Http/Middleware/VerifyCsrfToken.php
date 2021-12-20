@@ -15,5 +15,6 @@ class VerifyCsrfToken extends Middleware
         "api/delete",
         "api/rename",
         "api/upload",
+        "api/create",
     ];
 }

@@ -18,4 +18,5 @@ Route::get("/api/show/{any?}", [ListAPIController::class, "show"])->where("any",
 Route::post("/api/delete", [ListAPIController::class, "destroy"]);
 Route::post("/api/rename", [ListAPIController::class, "update"]);
 Route::post("/api/upload", [ListAPIController::class, "store"]);
+Route::post("/api/create", [ListAPIController::class, "create"]);
 Route::post("/api/chunk-upload", [ListAPIController::class, "chunk_upload"]);

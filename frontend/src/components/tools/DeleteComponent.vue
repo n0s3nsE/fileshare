@@ -22,10 +22,11 @@ export default {
     },
   },
   mounted() {
-    this.current_path = this.get_path() + "/";
+    this.current_path = this.get_path();
   },
   methods: {
     async delete_items() {
+      console.log(this.current_path);
       this.selected_items = this.selected_items_getters;
       await axios.post(this.delete_api_url, {
         delete_items: this.selected_items,
