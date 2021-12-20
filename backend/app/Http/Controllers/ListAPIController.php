@@ -40,9 +40,42 @@ class ListAPIController extends Controller
         }
 
         Storage::move('uploads' . $ct->path . '/' . $ct->name, 'uploads' . $ct->path . '/' . $new_name);
+        if ($ct->isfolder) {
+            $this->update_child_path($id, $new_name);
+        }
         $ct->fill(['name' => $new_name])->save();
 
         return response(json_encode(['msg' => 'success']), 200);
+    }
+
+    public function update_child_path($id, $new_name)
+    {
+        $ct = Content::find($id);
+        if ($ct->path == "/") {
+            $ct_path = $ct->path . $ct->name;
+            $new_path = $ct->path . $new_name;
+        } else {
+            $ct_path = $ct->path . "/" . $ct->name;
+            $new_path = $ct->path . "/" . $new_name;
+        }
+
+        $child_contents = Content::where('path', $ct_path)->get();
+        $child_contents_sub = Content::where('path', 'like', $ct_path . "/%")->get();
+
+        foreach ($child_contents as $cc) {
+            if ($ct->path == "/") {
+                $new_path2 = "/" . $new_name;
+            } else {
+                $new_path2 = pathinfo($cc->path)['dirname'] . "/" . $new_name;
+            }
+            $cc->fill(['path' => $new_path2])->save();
+        }
+
+        foreach ($child_contents_sub as $ccs) {
+            $ccs_old_path = $ccs->path;
+            $ccs_new_path = preg_replace('{^' . $ct_path . '}', $new_path, $ccs_old_path);
+            $ccs->fill(['path' => $ccs_new_path])->save();
+        }
     }
 
     public function destroy(Request $request)
