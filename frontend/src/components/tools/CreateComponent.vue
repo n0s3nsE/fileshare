@@ -8,6 +8,7 @@
         type="text"
         placeholder="フォルダ名を入力"
         v-model="new_folder_name"
+        @keydown.enter="create_folder"
       />
       <button @click="create_folder">作成</button>
       <button @click="change_status(false)">キャンセル</button>
@@ -34,6 +35,7 @@ export default {
   methods: {
     change_status(stat) {
       this.cfm_status = stat;
+      this.new_folder_name = "";
     },
     async create_folder() {
       await axios.post(this.create_api_url, {
@@ -41,6 +43,7 @@ export default {
         path: this.current_path,
       });
       await this.get_itemlist(this.current_path);
+      this.change_status(false);
     },
   },
 };
