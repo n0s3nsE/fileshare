@@ -1,9 +1,13 @@
 <template>
   <div class="path">
+    <span>
+      /
+      <a href="/">home</a>
+    </span>
     <span v-for="(folder, index) in sp_current_path" :key="index">
       /
-      <a :href="get_url(index)">
-        {{ folder }}
+      <a :href="folder.url">
+        {{ folder.name }}
       </a>
     </span>
     <span> / {{ current_folder }} </span>
@@ -11,36 +15,37 @@
 </template>
 
 <script>
-import Mixin from '../mixin/mixin';
+import Mixin from "../mixin/mixin";
 
 export default {
   data() {
     return {
-      current_path: '',
+      current_path: "",
       sp_current_path: [],
-      current_folder: '',
+      current_folder: "",
     };
   },
   mixins: [Mixin],
-  mounted: function () {
-    this.current_path = this.get_path();
-    this.split_path();
+  mounted() {
+    this.split_path(this.get_path());
   },
   methods: {
-    split_path() {
-      this.sp_current_path = this.current_path
-        .split('/')
-        .filter((x) => x != '');
-      this.current_folder =
-        this.sp_current_path[this.sp_current_path.length - 1];
-      this.sp_current_path.pop();
-    },
-    get_url(index) {
-      let temp = '';
-      for (let i = 0; i < index; i++) {
-        temp += '/' + this.sp_current_path[i];
+    split_path(current_path) {
+      const sp_path = current_path.split("/").filter((x) => x != "");
+      this.current_folder = sp_path[sp_path.length - 1];
+      sp_path.pop();
+      console.log(sp_path);
+
+      for (let i = 0; i < sp_path.length; i++) {
+        let tmp = "";
+        for (let ii = 0; ii < i + 1; ii++) {
+          tmp = tmp + "/" + sp_path[ii];
+          this.sp_current_path[i] = {
+            name: sp_path[i],
+            url: tmp,
+          };
+        }
       }
-      return temp;
     },
   },
 };
