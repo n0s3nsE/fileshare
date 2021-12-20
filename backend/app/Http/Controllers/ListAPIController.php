@@ -111,7 +111,7 @@ class ListAPIController extends Controller
 
         if ($this->check_folder_exists(substr($path, 1))) {
 
-            $name = $this->rename_same_name($name, $path);
+            $name = $this->rename_same_filename($name, $path);
 
             $content = new Content();
 
@@ -143,6 +143,8 @@ class ListAPIController extends Controller
             return response(['msg' => 'error'], 500);
         }
 
+        $new_folder_name = $this->rename_same_foldername($new_folder_name, $path);
+
         if ($this->check_folder_exists(substr($path, 1))) {
             Storage::makeDirectory("uploads/" . $path . "/" . $new_folder_name);
             $content = new Content();
@@ -161,18 +163,29 @@ class ListAPIController extends Controller
         }
     }
 
-    public function rename_same_name($name, $path)
+    public function rename_same_filename($name, $path)
     {
         //split filename
         $filename = pathinfo($name)['filename'];
         $ext = pathinfo($name)['extension'];
         $index = 1;
 
-        while (Content::where('path', $path)->where('name', $name)->exists()) {
+        while (Content::where('path', $path)->where('name', $name)->where('isfolder', false)->exists()) {
             $name = $filename . "({$index})." . $ext;
             $index += 1;
         }
+        return $name;
+    }
 
+    public function rename_same_foldername($name, $path)
+    {
+        $foldername = $name;
+        $index = 1;
+
+        while (Content::where('path', $path)->where('name', $name)->where('isfolder', true)->exists()) {
+            $name = $foldername . "({$index})";
+            $index += 1;
+        }
         return $name;
     }
 
