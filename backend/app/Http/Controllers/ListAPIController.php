@@ -59,17 +59,16 @@ class ListAPIController extends Controller
                 $delcontent = Content::find($i);
 
                 if ($delcontent->isfolder) {
-                    Storage::deleteDirectory('uploads' . $delcontent->path . '/' . $delcontent->name);
-                    Content::where('id', $delcontent->id)->delete();
-
-                    $delpath = "";
                     if ($delcontent->path == "/") {
-                        $delpath = "/" . $delcontent->name;
+                        $delcontent_path = "/" . $delcontent->name;
                     } else {
-                        $delpath = $delcontent->path . "/" . $delcontent->name;
+                        $delcontent_path = $delcontent->path . "/" . $delcontent->name;
                     }
 
-                    return response($this->delete_child_record($delpath), 200);
+                    Storage::deleteDirectory("uploads" . $delcontent_path);
+                    Content::where('id', $delcontent->id)->delete();
+
+                    $this->delete_child_record($delcontent_path);
                 } else {
                     Storage::delete('uploads' . $delcontent->path . '/' . $delcontent->name);
                 }
@@ -93,7 +92,6 @@ class ListAPIController extends Controller
             $path = $i->path . '/' . $i->name;
             Content::select('id')->where('path', $path)->where('isfolder', false)->delete();
             if (Content::where('path', $path)->where('isfolder', true)->exists()) {
-                // /folder1/folder2
                 $this->delete_child_record($path);
             }
         }
