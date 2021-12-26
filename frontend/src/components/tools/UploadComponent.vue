@@ -27,6 +27,9 @@ export default {
       status: true,
       chunk_progress: 0,
       chunk_size: 104857600,
+      axios_headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
     };
   },
   mixins: [Mixin],
@@ -134,12 +137,16 @@ export default {
     },
     async send_endchunk_flag(name, tmp_name, index) {
       try {
-        await axios.post(this.upload_api_url, {
-          name: name,
-          tmp_name: tmp_name,
-          path: this.get_path(),
-          endflag: true,
-        });
+        await axios.post(
+          this.upload_api_url,
+          {
+            name: name,
+            tmp_name: tmp_name,
+            path: this.get_path(),
+            endflag: true,
+          },
+          this.axios_headers
+        );
         this.$store.commit("update_progress", {
           item: {
             id: index,

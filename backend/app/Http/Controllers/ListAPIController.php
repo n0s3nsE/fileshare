@@ -221,7 +221,10 @@ class ListAPIController extends Controller
             $index = 0;
             while (Storage::exists("uploads{$path}/{$tmp_name}." . ($index + 1))) {
                 $f = Storage::get("uploads{$path}/{$tmp_name}." . ($index + 1));
-                Storage::append("uploads{$path}/{$tmp_name}.0", $f, null);
+                $f2 = fopen(storage_path("app/uploads{$path}/{$tmp_name}.0"), "a");
+                fwrite($f2, $f);
+                fclose($f2);
+
                 Storage::delete("uploads{$path}/{$tmp_name}." . ($index + 1));
                 $index += 1;
             }
