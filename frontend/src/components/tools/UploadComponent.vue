@@ -81,7 +81,7 @@ export default {
         });
       });
     },
-    async file_slice(file) {
+    file_slice(file, index) {
       const slice_count = Math.ceil(file.size / this.chunk_size);
       const slice_file = [];
       this.chunk_progress = slice_count;
@@ -102,68 +102,52 @@ export default {
         }
       }
 
-      this.chunk_upload(slice_file, slice_count);
+      this.chunk_upload(slice_file, slice_count, index);
     },
-    async chunk_upload(file, sl_ct) {
+    async chunk_upload(file, sl_ct, index) {
       const slice_tmpname = Math.random().toString(36).slice(-8);
       let finish_chunk = 0;
 
       await Promise.all(
-        file.map(async (f, index) => {
+        file.map(async (f, i) => {
           const formData = new FormData();
           formData.append("name", f.name);
           formData.append("path", this.get_path());
           formData.append("tmp_name", slice_tmpname);
+          formData.append("index", i);
           formData.append("data", f.data);
 
           try {
             await axios.post(this.upload_api_url, formData);
-            console.log(index);
             finish_chunk += 1;
 
             this.$store.commit("update_progress", {
               item: {
                 id: index,
-                progress: (finish_chunk / sl_ct) * 100,
+                progress: Math.floor((finish_chunk / sl_ct) * 100) - 1,
               },
             });
           } catch (error) {}
         })
       );
+      this.send_endchunk_flag(file[0].name, slice_tmpname, index);
     },
-    /* chunk_upload(file, index) {
-      const slice_count = Math.ceil(file.size / this.chunk_size);
-      const slice_tmpname = Math.random().toString(36).slice(-8);
-
-      for (let i = 0; i < slice_count; i++) {
-        let slice_file;
-
-        if (i + 1 === slice_count) {
-          slice_file = file.slice(i * this.chunk_size, file.size);
-        } else {
-          slice_file = file.slice(
-            i * this.chunk_size,
-            (i + 1) * this.chunk_size
-          );
-        }
-
-        const formData = new FormData();
-        formData.append("name", file.name);
-        formData.append("path", this.get_path());
-        formData.append("tmp_name", slice_tmpname);
-        formData.append("index", i);
-        formData.append("data", slice_file);
-
-        axios.post(this.upload_api_url, formData).then(() => {
-          this.$store.commit("update_progress", {
-            item: {
-              id: index,
-              progress: (100 / slice_count) * (i + 1),
-            },
-          });
+    async send_endchunk_flag(name, tmp_name, index) {
+      try {
+        await axios.post(this.upload_api_url, {
+          name: name,
+          tmp_name: tmp_name,
+          path: this.get_path(),
+          endflag: true,
         });
-      }
-    }, */
+        this.$store.commit("update_progress", {
+          item: {
+            id: index,
+            progress: 100,
+          },
+        });
+      } catch (error) {}
+    },
   },
 };
 </script>
