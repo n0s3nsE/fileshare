@@ -34,7 +34,6 @@ export default {
       const sp_path = current_path.split("/").filter((x) => x != "");
       this.current_folder = sp_path[sp_path.length - 1];
       sp_path.pop();
-      console.log(sp_path);
 
       for (let i = 0; i < sp_path.length; i++) {
         let tmp = "";
