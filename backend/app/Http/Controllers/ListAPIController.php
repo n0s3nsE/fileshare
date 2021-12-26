@@ -134,20 +134,38 @@ class ListAPIController extends Controller
 
     public function store(Request $request)
     {
-        $name = $request->name;
-        $path = $request->path;
-        $data = $request->data;
-
-        if ($name == "" || $path == "") {
+        if ($request->name == "" || $request->path == "") {
             return response(['msg' => 'error'], 500);
         }
 
-        if ($this->check_folder_exists(substr($path, 1))) {
+        if ($this->check_folder_exists(substr($request->path, 1))) {
+            if ($request->tmp_name) {
+                if ($this->chunk_upload($request)) {
+                    return response(json_encode(['msg' => 'success']), 200);
+                } else {
+                    return response(json_encode(['msg' => 'error', 500]));
+                }
+            } else {
+                if ($this->upload($request)) {
+                    return response(json_encode(['msg' => 'success']), 200);
+                } else {
+                    return response(json_encode(['msg' => 'error', 500]));
+                }
+            }
+        } else {
+            return response(json_encode(['msg' => 'not exists folder: ' . $request->path]), 500);
+        }
+    }
+    public function upload($request)
+    {
+        $name = $request->name;
+        $path = $request->path;
+        $data = $request->data;
+        $name = $this->rename_same_filename($name, $path);
 
-            $name = $this->rename_same_filename($name, $path);
+        $content = new Content();
 
-            $content = new Content();
-
+        try {
             Storage::putFileAs('uploads' . $path, $data, $name);
             $content->fill([
                 'name' => $name,
@@ -158,13 +176,61 @@ class ListAPIController extends Controller
                 'created_at' => null,
                 'updated_at' => null
             ])->save();
-            return response(json_encode(['msg' => 'success']), 200);
-        } else {
-            return response(json_encode(['msg' => 'not exists folder: ' . $path]), 500);
+            return true;
+        } catch (Exception $e) {
+            return false;
         }
     }
     public function chunk_upload(Request $request)
     {
+        $name = $request->name;
+        $path = $request->path;
+        $tmp_name = $request->tmp_name;
+
+        if ($request->endflag) {
+            return $this->join_chunk($name, $path, $tmp_name);
+        } else {
+            $index = $request->index;
+            $data = $request->data;
+            $name = $this->rename_same_filename($name, $path);
+
+            Storage::putFileAs('uploads' . $path, $data, "{$tmp_name}.tmp.{$index}");
+        }
+    }
+
+    public function join_chunk($name, $path, $tmp_name)
+    {
+        $name = $this->rename_same_filename($name, $path);
+        try {
+            $content = new Content();
+            $content->fill([
+                'name' => $name,
+                'size' => 0,
+                'isfolder' => false,
+                'path' => $path,
+                'islocked' => false,
+                'created_at' => null,
+                'updated_at' => null
+            ])->save();
+
+            if ($path == "/") {
+                $path = "";
+            }
+
+            $tmp_name = $tmp_name . '.tmp';
+            $index = 0;
+            while (Storage::exists("uploads{$path}/{$tmp_name}." . ($index + 1))) {
+                $f = Storage::get("uploads{$path}/{$tmp_name}." . ($index + 1));
+                Storage::append("uploads{$path}/{$tmp_name}.0", $f, null);
+                Storage::delete("uploads{$path}/{$tmp_name}." . ($index + 1));
+                $index += 1;
+            }
+            Storage::move("uploads{$path}/{$tmp_name}.0", "uploads{$path}/{$name}");
+
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
     public function create(Request $request)
