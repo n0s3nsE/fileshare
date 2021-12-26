@@ -2,7 +2,7 @@
   <div class="contents">
     <div class="list-view">
       <div v-if="empty_folder">
-        <span>空のフォルダ</span>
+        <span v-if="upload_queue.length === 0">空のフォルダ</span>
         <table v-if="upload_queue.length > 0">
           <thead>
             <tr>
