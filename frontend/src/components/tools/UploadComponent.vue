@@ -25,6 +25,7 @@ export default {
       files: [],
       upload_api_url: "http://127.0.0.1:8000/api/upload",
       status: true,
+      chunk_size: 314572800,
     };
   },
   mixins: [Mixin],
@@ -53,24 +54,46 @@ export default {
           },
         });
       }
-      this.file_upload();
+      this.check_size();
     },
-    file_upload() {
+    check_size() {
       for (let i = 0; i < this.files.length; i++) {
-        const formData = new FormData();
-        formData.append("name", this.files[i].name);
-        formData.append("path", this.get_path());
-        formData.append("data", this.files[i]);
-
-        axios.post(this.upload_api_url, formData).then(() => {
-          this.$store.commit("update_progress", {
-            item: {
-              id: i,
-              progress: 100,
-            },
-          });
-        });
+        if (this.files[i].size >= this.chunk_size) {
+          this.chunk_upload(this.files[i], i);
+        } else {
+          this.file_upload(this.files[i], i);
+        }
       }
+    },
+    file_upload(file, index) {
+      const formData = new FormData();
+      formData.append("name", file.name);
+      formData.append("path", this.get_path());
+      formData.append("data", file);
+
+      axios.post(this.upload_api_url, formData).then(() => {
+        this.$store.commit("update_progress", {
+          item: {
+            id: index,
+            progress: 100,
+          },
+        });
+      });
+    },
+    chunk_upload(file, index) {
+      const formData = new FormData();
+      formData.append("name", file.name);
+      formData.append("path", this.get_path());
+      formData.append("data", file);
+
+      axios.post(this.upload_api_url, formData).then(() => {
+        this.$store.commit("update_progress", {
+          item: {
+            id: index,
+            progress: 100,
+          },
+        });
+      });
     },
   },
 };
