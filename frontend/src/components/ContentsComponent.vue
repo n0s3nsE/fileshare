@@ -3,6 +3,28 @@
     <div class="list-view">
       <div v-if="empty_folder">
         <span>空のフォルダ</span>
+        <table v-if="upload_queue.length > 0">
+          <thead>
+            <tr>
+              <th></th>
+              <th>ファイル名</th>
+              <th>更新</th>
+              <th>サイズ</th>
+              <th>ロック</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(item, index) in upload_queue"
+              :key="'upload-queue-' + index"
+            >
+              <td></td>
+              <td>{{ item.name }}</td>
+              <td>{{ item.progress }}</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <div v-else-if="not_exists_folder">存在しないフォルダ</div>
       <table v-else>
