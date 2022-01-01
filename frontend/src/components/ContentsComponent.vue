@@ -66,7 +66,8 @@
               <rename-text-box v-if="rename_flag === item.id" />
             </td>
             <td>{{ item.updated_at }}</td>
-            <td>{{ item.size }}</td>
+            <td v-if="item.size < 1024">{{ item.size }}KB</td>
+            <td v-else>{{ Math.round((item.size / 1024) * 10) / 10 }}MB</td>
             <td>{{ item.islocked }}</td>
           </tr>
           <tr
