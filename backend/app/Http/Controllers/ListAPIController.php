@@ -7,21 +7,20 @@ use App\Models\Content;
 use Exception;
 use Illuminate\Support\Facades\Storage;
 
-
 class ListAPIController extends Controller
 {
     public function show($id = "")
     {
-        $contents = Content::select("id", "name", "size", "isfolder", "islocked")->where("path", "/" . $id);
+        $contents = Content::select("id", "name", "size", "isfolder", "islocked", "updated_at")->where("path", "/" . $id)->get();
 
         if (!$this->check_folder_exists($id)) {
             return response(json_encode(['msg' => 'not exists folder']), 404);
         }
 
-        if ($contents->get()->isEmpty()) {
+        if ($contents->isEmpty()) {
             return response("", 204);
         } else {
-            return response(json_encode(array("itemlist" => $contents->get())), 200);
+            return response(json_encode(array("itemlist" => $contents)), 200);
         }
     }
 
@@ -173,8 +172,6 @@ class ListAPIController extends Controller
                 'isfolder' => false,
                 'path' => $path,
                 'islocked' => false,
-                'created_at' => null,
-                'updated_at' => null
             ])->save();
             return true;
         } catch (Exception $e) {
@@ -209,8 +206,6 @@ class ListAPIController extends Controller
                 'isfolder' => false,
                 'path' => $path,
                 'islocked' => false,
-                'created_at' => null,
-                'updated_at' => null
             ])->save();
 
             if ($path == "/") {
@@ -256,8 +251,6 @@ class ListAPIController extends Controller
                 'isfolder' => true,
                 'path' => $path,
                 'islocked' => false,
-                'created_at' => null,
-                'updated_at' => null
             ])->save();
             return response(json_encode(['msg' => 'success']), 200);
         } else {
