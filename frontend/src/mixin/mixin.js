@@ -16,9 +16,17 @@ export default {
       
       axios.get(this.show_api_url + folder)
         .then((response) => { 
-          this.set_itemlist(this.convart_dt(response.data.itemlist));
+          if(response.data.itemlist)
+          {
+            this.set_itemlist(this.convart_dt(response.data.itemlist));
+          }
+          else
+          {
+            this.set_itemlist(response.data.itemlist);
+          }
         })
-        .catch(function(error){
+        .catch((error) => {
+          console.log(error);
           this.set_itemlist([{
             id: 0,
             name: error.response.data.msg,
