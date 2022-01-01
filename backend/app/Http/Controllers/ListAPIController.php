@@ -166,9 +166,11 @@ class ListAPIController extends Controller
 
         try {
             Storage::putFileAs('uploads' . $path, $data, $name);
+            $f_size = Storage::size('uploads' . $path . '/' . $name) / 1024; //KB
+
             $content->fill([
                 'name' => $name,
-                'size' => 0,
+                'size' => $f_size,
                 'isfolder' => false,
                 'path' => $path,
                 'islocked' => false,
@@ -199,14 +201,7 @@ class ListAPIController extends Controller
     {
         $name = $this->rename_same_filename($name, $path);
         try {
-            $content = new Content();
-            $content->fill([
-                'name' => $name,
-                'size' => 0,
-                'isfolder' => false,
-                'path' => $path,
-                'islocked' => false,
-            ])->save();
+            $f_path = $path;
 
             if ($path == "/") {
                 $path = "";
@@ -224,6 +219,16 @@ class ListAPIController extends Controller
                 $index += 1;
             }
             Storage::move("uploads{$path}/{$tmp_name}.0", "uploads{$path}/{$name}");
+            $f_size = Storage::size("uploads{$path}/{$name}") / 1024; //KB
+
+            $content = new Content();
+            $content->fill([
+                'name' => $name,
+                'size' => $f_size,
+                'isfolder' => false,
+                'path' => $f_path,
+                'islocked' => false,
+            ])->save();
 
             return true;
         } catch (Exception $e) {
