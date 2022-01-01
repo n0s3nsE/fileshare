@@ -10,14 +10,14 @@ export default {
     get_path() {
       return decodeURI(window.location.pathname);
     },
-    //api
+    
     get_itemlist(folder) {
       folder = folder.replace(/\/*$/, "");
       
       axios.get(this.show_api_url + folder)
-        .then(function(response){
-          this.set_itemlist(response.data.itemlist);
-        }.bind(this))
+        .then((response) => { 
+          this.set_itemlist(this.convart_dt(response.data.itemlist));
+        })
         .catch(function(error){
           this.set_itemlist([{
             id: 0,
@@ -27,7 +27,7 @@ export default {
           this.$store.commit("toolbar_status_mutation", {
             stat: false,
           });
-        }.bind(this));
+        });
 
         this.$store.commit("selected_items_mutation", {
           items: [],
@@ -37,6 +37,22 @@ export default {
       this.$store.commit("set_itemlist_mutation", {
         items: items
       });
+    },
+    convart_dt(dt){
+      return dt.map(i => {
+        const t = new Date(Date.parse(i.updated_at));
+        const updated_at = t.getFullYear() + "/" + (t.getMonth() + 1) + "/" + t.getDate() + " " + t.getHours() + ":" + t.getMinutes() +":" + t.getMinutes();
+        return {
+          id: i.id,
+          name: i.name,
+          size: i.size,
+          isfolder: i.isfolder,
+          islocked: i.islocked,
+          updated_at: updated_at
+        }
+      });
+      
+
     }
   },
 };

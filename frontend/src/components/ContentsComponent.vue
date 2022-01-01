@@ -65,7 +65,7 @@
               </a>
               <rename-text-box v-if="rename_flag === item.id" />
             </td>
-            <td>{{ item.updatedAt }}</td>
+            <td>{{ item.updated_at }}</td>
             <td>{{ item.size }}</td>
             <td>{{ item.islocked }}</td>
           </tr>
