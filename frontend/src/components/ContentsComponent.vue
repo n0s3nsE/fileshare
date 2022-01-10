@@ -10,7 +10,6 @@
               <th>ファイル名</th>
               <th>更新</th>
               <th>サイズ</th>
-              <th>ロック</th>
             </tr>
           </thead>
           <tbody>
@@ -21,7 +20,6 @@
               <td></td>
               <td>{{ item.name }}</td>
               <td>{{ item.progress }}</td>
-              <td></td>
             </tr>
           </tbody>
         </table>
@@ -40,13 +38,13 @@
             <th>ファイル名</th>
             <th>更新</th>
             <th>サイズ</th>
-            <th>ロック</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(item, index) in items" :key="index">
             <td>
               <input
+                v-if="!item.islocked"
                 type="checkbox"
                 @change="select_change()"
                 :value="item.id"
@@ -54,21 +52,26 @@
               />
             </td>
             <td v-if="item.isfolder">
-              <a :href="current_path + item.name">
-                {{ item.name }}
-              </a>
-              <rename-text-box v-if="rename_flag === item.id" />
+              <div>
+                <a :href="current_path + item.name">
+                  {{ item.name }}
+                </a>
+                <rename-text-box v-if="rename_flag === item.id" />
+              </div>
+              <lock-button :item_id="item.id" />
             </td>
             <td v-else>
-              <a :href="'/content' + current_path + item.name">
-                {{ item.name }}
-              </a>
-              <rename-text-box v-if="rename_flag === item.id" />
+              <div>
+                <a :href="'/content' + current_path + item.name">
+                  {{ item.name }}
+                </a>
+                <rename-text-box v-if="rename_flag === item.id" />
+              </div>
+              <lock-button :item_id="item.id" />
             </td>
             <td>{{ item.updated_at }}</td>
             <td v-if="item.size < 1024">{{ item.size }}KB</td>
             <td v-else>{{ Math.round((item.size / 1024) * 10) / 10 }}MB</td>
-            <td>{{ item.islocked }}</td>
           </tr>
           <tr
             v-for="(item, index) in upload_queue"
@@ -77,7 +80,6 @@
             <td></td>
             <td>{{ item.name }}</td>
             <td>{{ item.progress }}</td>
-            <td></td>
           </tr>
         </tbody>
       </table>
@@ -88,10 +90,12 @@
 <script>
 import Mixin from "../mixin/mixin";
 import RenameTextBox from "./tools/RenameComponent.vue";
+import LockButton from "./tools/LockbuttonComponent.vue";
 
 export default {
   components: {
     RenameTextBox,
+    LockButton,
   },
   data() {
     return {
