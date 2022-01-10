@@ -38,6 +38,10 @@ class ListAPIController extends Controller
             return response(json_encode(['msg' => 'error']), 500);
         }
 
+        if ($this->check_islocked($id)) {
+            return response(json_encode(['msg' => 'Content is locked.']), 500);
+        }
+
         Storage::move('uploads' . $ct->path . '/' . $ct->name, 'uploads' . $ct->path . '/' . $new_name);
         if ($ct->isfolder) {
             $this->update_child_path($id, $new_name);
@@ -111,6 +115,7 @@ class ListAPIController extends Controller
             return response(json_encode(['msg' => 'failed', 'detail' => $failed_items]), 500);
         }
     }
+
     public function delete_subcontents($id)
     {
         $parent_folder = Content::find($id);
@@ -152,16 +157,6 @@ class ListAPIController extends Controller
         }
     }
 
-    public function check_islocked($id)
-    {
-        $ct = Content::find($id);
-        if ($ct->islocked) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public function store(Request $request)
     {
         if ($request->name == "" || $request->path == "") {
@@ -186,6 +181,7 @@ class ListAPIController extends Controller
             return response(json_encode(['msg' => 'not exists folder: ' . $request->path]), 500);
         }
     }
+
     public function upload($request)
     {
         $name = $request->name;
@@ -211,6 +207,7 @@ class ListAPIController extends Controller
             return false;
         }
     }
+
     public function chunk_upload(Request $request)
     {
         $name = $request->name;
@@ -352,5 +349,15 @@ class ListAPIController extends Controller
             return false;
         }
         return true;
+    }
+
+    public function check_islocked($id)
+    {
+        $ct = Content::find($id);
+        if ($ct->islocked) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
