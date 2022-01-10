@@ -8,7 +8,10 @@
       v-else-if="ext_type.video.indexOf(param_ext) > -1"
       :src="view_api_url + '/' + param_id"
     />
-    <div v-else>no</div>
+    <div v-else>
+      <p>プレビュー非対応なファイル形式</p>
+      <a :href="view_api_url + '/' + param_id">Download</a>
+    </div>
   </div>
 </template>
 <script>
