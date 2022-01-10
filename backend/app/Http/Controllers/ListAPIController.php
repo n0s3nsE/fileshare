@@ -133,7 +133,6 @@ class ListAPIController extends Controller
                 Content::where('path', "{$parent_folder->path}/{$parent_folder->name}")->where('isfolder', false)->where('islocked', false)->delete();
             }
         }
-
         if ($sub_folder->exists()) {
             foreach ($sub_folder->get() as $sfolder) {
                 if (!$sfolder->islocked) {
