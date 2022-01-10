@@ -62,7 +62,11 @@
             </td>
             <td v-else>
               <div>
-                <a :href="'?view=' + item.id">
+                <a
+                  :href="
+                    '?view=' + item.id + '&ext=' + item.name.split('.').pop()
+                  "
+                >
                   {{ item.name }}
                 </a>
                 <rename-text-box v-if="rename_flag === item.id" />
