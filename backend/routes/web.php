@@ -20,4 +20,3 @@ Route::post("/api/rename", [ListAPIController::class, "update"]);
 Route::post("/api/upload", [ListAPIController::class, "store"]);
 Route::post("/api/create", [ListAPIController::class, "create"]);
 Route::post("/api/chunk-upload", [ListAPIController::class, "chunk_upload"]);
-Route::get("/api/lock/{id}", [ListAPIController::class, "content_lock"])->where("id", "[0-9]+");
