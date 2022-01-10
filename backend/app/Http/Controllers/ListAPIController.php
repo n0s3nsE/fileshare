@@ -94,6 +94,11 @@ class ListAPIController extends Controller
                     if ($delete_item->isfolder) {
                         $ds = $this->delete_subcontents($delete_item_id);
                         if (!$ds) {
+                            if ($delete_item->path === "/") {
+                                $delete_item->path = "";
+                            }
+                            Storage::deleteDirectory("uploads{$delete_item->path}/{$delete_item->name}");
+                            $delete_item->delete();
                         } else {
                             array_push($failed_items, $ds);
                         }
@@ -119,6 +124,9 @@ class ListAPIController extends Controller
     public function delete_subcontents($id)
     {
         $parent_folder = Content::find($id);
+        if ($parent_folder->path === "/") {
+            $parent_folder->path = "";
+        }
         $sub_file = Content::where('path', "{$parent_folder->path}/{$parent_folder->name}")->where('isfolder', false);
         $sub_folder = Content::where('path', "{$parent_folder->path}/{$parent_folder->name}")->where('isfolder', true);
         $failed_items = [];
