@@ -38,6 +38,10 @@ class ListAPIController extends Controller
             return response(json_encode(['msg' => 'error']), 500);
         }
 
+        if ($this->check_islocked($id)) {
+            return response(json_encode(['msg' => 'Content is locked.']), 500);
+        }
+
         Storage::move('uploads' . $ct->path . '/' . $ct->name, 'uploads' . $ct->path . '/' . $new_name);
         if ($ct->isfolder) {
             $this->update_child_path($id, $new_name);
@@ -79,56 +83,77 @@ class ListAPIController extends Controller
 
     public function destroy(Request $request)
     {
-        $delete_items = $request->delete_items;
-        $error_items_id = [];
+        $delete_item_ids = $request->delete_items;
+        $failed_items = [];
 
-        if ($delete_items == []) {
-            return response(json_encode(['msg' => 'error']), 500);
-        }
+        foreach ($delete_item_ids as $delete_item_id) {
+            $delete_item = Content::find($delete_item_id);
 
-        foreach ($delete_items as $i) {
-            try {
-                $delcontent = Content::find($i);
-
-                if ($delcontent->isfolder) {
-                    if ($delcontent->path == "/") {
-                        $delcontent_path = "/" . $delcontent->name;
+            if (!is_null($delete_item)) {
+                if (!$this->check_islocked($delete_item_id)) {
+                    if ($delete_item->isfolder) {
+                        $ds = $this->delete_subcontents($delete_item_id);
+                        if (!$ds) {
+                        } else {
+                            array_push($failed_items, $ds);
+                        }
                     } else {
-                        $delcontent_path = $delcontent->path . "/" . $delcontent->name;
+                        Storage::delete("uploads{$delete_item->path}/{$delete_item->name}");
+                        $delete_item->delete();
                     }
-
-                    Storage::deleteDirectory("uploads" . $delcontent_path);
-                    Content::where('id', $delcontent->id)->delete();
-
-                    $this->delete_child_record($delcontent_path);
                 } else {
-                    Storage::delete('uploads' . $delcontent->path . '/' . $delcontent->name);
+                    array_push($failed_items, ['id' => $delete_item_id, 'detail' => 'Content is locked.']);
                 }
-                Content::where('id', $i)->delete();
-            } catch (Exception $e) {
-                array_push($error_items_id, $i);
+            } else {
+                array_push($failed_items, ['id' => $delete_item_id, 'detail' => 'Not exists content.']);
             }
         }
 
-        if ($error_items_id != []) {
-            return response(json_encode(['msg' => 'delete failed', 'id' => $error_items_id]), 500);
-        } else {
+        if (!$failed_items) {
             return response(json_encode(['msg' => 'success']), 200);
+        } else {
+            return response(json_encode(['msg' => 'failed', 'detail' => $failed_items]), 500);
         }
     }
 
-    public function delete_child_record($del_rec)
+    public function delete_subcontents($id)
     {
-        $child_folder = Content::where('path', $del_rec)->where('isfolder', true)->get();
-        foreach ($child_folder as $i) {
-            $path = $i->path . '/' . $i->name;
-            Content::select('id')->where('path', $path)->where('isfolder', false)->delete();
-            if (Content::where('path', $path)->where('isfolder', true)->exists()) {
-                $this->delete_child_record($path);
+        $parent_folder = Content::find($id);
+        $sub_file = Content::where('path', "{$parent_folder->path}/{$parent_folder->name}")->where('isfolder', false);
+        $sub_folder = Content::where('path', "{$parent_folder->path}/{$parent_folder->name}")->where('isfolder', true);
+        $failed_items = [];
+
+        if ($sub_file->exists()) {
+            foreach ($sub_file->get() as $sfile) {
+                if (!$sfile->islocked) {
+                    Storage::delete("uploads{$sfile->path}/{$sfile->name}");
+                } else {
+                    array_push($failed_items, ['id' => $sfile->id, 'detail' => 'Content is locked.']);
+                }
+                Content::where('path', "{$parent_folder->path}/{$parent_folder->name}")->where('isfolder', false)->where('islocked', false)->delete();
             }
         }
-        Content::select('id')->where('path', $del_rec)->where('isfolder', false)->delete();
-        Content::where('path', $del_rec)->where('isfolder', true)->delete();
+        if ($sub_folder->exists()) {
+            foreach ($sub_folder->get() as $sfolder) {
+                if (!$sfolder->islocked) {
+                    $res = $this->delete_subcontents($sfolder->id);
+                    if (!$res) {
+                        Storage::deleteDirectory("uploads{$sfolder->path}/{$sfolder->name}");
+                        Content::find($sfolder->id)->delete();
+                    } else {
+                        array_push($failed_items, ['id' => $sfolder->id, 'detail' => 'Content is locked.']);
+                    }
+                } else {
+                    array_push($failed_items, ['id' => $sfolder->id, 'detail' => 'Content is locked.']);
+                }
+            }
+        }
+
+        if (!$failed_items) {
+            return false;
+        } else {
+            return $failed_items;
+        }
     }
 
     public function store(Request $request)
@@ -155,6 +180,7 @@ class ListAPIController extends Controller
             return response(json_encode(['msg' => 'not exists folder: ' . $request->path]), 500);
         }
     }
+
     public function upload($request)
     {
         $name = $request->name;
@@ -180,6 +206,7 @@ class ListAPIController extends Controller
             return false;
         }
     }
+
     public function chunk_upload(Request $request)
     {
         $name = $request->name;
@@ -263,6 +290,17 @@ class ListAPIController extends Controller
         }
     }
 
+    public function content_lock($id)
+    {
+        $ct = Content::find($id);
+        if ($ct) {
+            $ct->fill(['islocked' => !$ct->islocked])->save();
+            return response(json_encode(['msg' => 'success']), 200);
+        } else {
+            return response(json_encode(['msg' => 'failed']), 500);
+        }
+    }
+
     public function rename_same_filename($name, $path)
     {
         //split filename
@@ -310,5 +348,15 @@ class ListAPIController extends Controller
             return false;
         }
         return true;
+    }
+
+    public function check_islocked($id)
+    {
+        $ct = Content::find($id);
+        if ($ct->islocked) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
