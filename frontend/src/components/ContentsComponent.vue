@@ -62,7 +62,7 @@
             </td>
             <td v-else>
               <div>
-                <a :href="'/content' + current_path + item.name">
+                <a :href="'?view=' + item.id">
                   {{ item.name }}
                 </a>
                 <rename-text-box v-if="rename_flag === item.id" />

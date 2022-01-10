@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ListAPIController;
+use App\Http\Controllers\PreviewController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,3 +22,4 @@ Route::post("/api/upload", [ListAPIController::class, "store"]);
 Route::post("/api/create", [ListAPIController::class, "create"]);
 Route::post("/api/chunk-upload", [ListAPIController::class, "chunk_upload"]);
 Route::get("/api/lock/{id}", [ListAPIController::class, "content_lock"])->where("id", "[0-9]+");
+Route::get("/api/preview/{id}", [PreviewController::class, "show"])->where("id", "[0-9]+");
