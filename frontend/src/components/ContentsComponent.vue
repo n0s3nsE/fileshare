@@ -90,6 +90,7 @@
 import Mixin from "../mixin/mixin";
 import RenameTextBox from "./tools/RenameComponent.vue";
 import LockButton from "./tools/LockbuttonComponent.vue";
+
 export default {
   components: {
     RenameTextBox,

@@ -39,3 +39,12 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.toolbar {
+  display: flex;
+  padding: 8px 0px;
+
+  border-bottom: rgb(102, 102, 102) 1px solid;
+}
+</style>

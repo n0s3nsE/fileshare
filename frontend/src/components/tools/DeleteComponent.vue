@@ -38,3 +38,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.toolbar-delete {
+  margin: 0 4px;
+}
+</style>

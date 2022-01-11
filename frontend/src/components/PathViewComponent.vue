@@ -49,3 +49,16 @@ export default {
   },
 };
 </script>
+<style scoped>
+.path {
+  padding: 8px 0;
+
+  font-size: 24px;
+}
+
+a:link,
+a:visited {
+  color: #545454;
+  text-decoration: none;
+}
+</style>

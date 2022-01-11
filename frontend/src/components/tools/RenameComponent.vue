@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <input type="text" @keydown.enter="rename_item()" ref="new_name" />
-  </div>
+  <input type="text" @keydown.enter="rename_item()" ref="new_name" />
 </template>
 <script>
 import axios from "axios";

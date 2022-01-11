@@ -24,6 +24,7 @@ export default new Vuex.Store({
         selected_items: [],
         rename_flag: null,
         toolbar_status: true,
+        cfm_status: false,
     },
     getters: {
         get_itemlist: state => {
@@ -40,6 +41,9 @@ export default new Vuex.Store({
         },
         get_toolbar_status: state => {
             return state.toolbar_status;
+        },
+        get_createfoldermodal_status: state => {
+            return state.cfm_status;
         }
     },
     mutations: {
@@ -67,6 +71,9 @@ export default new Vuex.Store({
         },
         toolbar_status_mutation(state, payload){
             state.toolbar_status = payload.stat;
+        },
+        createfoldermodal_mutation(state, payload){
+            state.cfm_status = payload.status;
         }
     },
 });

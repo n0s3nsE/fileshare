@@ -158,3 +158,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.toolbar-upload {
+  margin: 0 8px 0 0;
+}
+</style>

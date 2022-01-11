@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="toolbar-rename">
     <button @click="open_textbox()">名前を変更</button>
   </div>
 </template>
@@ -20,3 +20,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.toolbar-rename {
+  margin: 0 4px;
+}
+</style>
