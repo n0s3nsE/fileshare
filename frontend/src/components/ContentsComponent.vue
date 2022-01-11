@@ -53,7 +53,10 @@
             </td>
             <td v-if="item.isfolder">
               <div>
-                <a :href="current_path + item.name">
+                <a
+                  v-if="rename_flag !== item.id"
+                  :href="current_path + item.name"
+                >
                   {{ item.name }}
                 </a>
                 <rename-text-box v-if="rename_flag === item.id" />
@@ -62,7 +65,10 @@
             </td>
             <td v-else>
               <div>
-                <a :href="'/content' + current_path + item.name">
+                <a
+                  v-if="rename_flag !== item.id"
+                  :href="'/content' + current_path + item.name"
+                >
                   {{ item.name }}
                 </a>
                 <rename-text-box v-if="rename_flag === item.id" />
