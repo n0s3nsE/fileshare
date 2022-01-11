@@ -37,7 +37,6 @@ export default {
   watch: {
     createfoldermodal_getters() {
       this.createfoldermodal_status = this.createfoldermodal_getters;
-      console.log(this.createfoldermodal_status);
     },
   },
 };
