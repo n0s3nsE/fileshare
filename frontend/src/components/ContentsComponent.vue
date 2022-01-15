@@ -42,7 +42,7 @@
         </thead>
         <tbody>
           <tr v-for="(item, index) in items" :key="index">
-            <td>
+            <td class="list-view-checkbox">
               <input
                 v-if="!item.islocked"
                 type="checkbox"
@@ -51,16 +51,16 @@
                 v-model="selected_items"
               />
             </td>
-            <td v-if="item.isfolder">
+            <td v-if="item.isfolder" class="list-view-name">
               <div>
                 <a :href="current_path + item.name">
                   {{ item.name }}
                 </a>
                 <rename-text-box v-if="rename_flag === item.id" />
               </div>
-              <lock-button :item_id="item.id" />
+              <lock-button :item_id="item.id" :islocked="item.islocked" />
             </td>
-            <td v-else>
+            <td v-else class="list-view-name">
               <div>
                 <a
                   :href="
@@ -71,11 +71,15 @@
                 </a>
                 <rename-text-box v-if="rename_flag === item.id" />
               </div>
-              <lock-button :item_id="item.id" />
+              <lock-button :item_id="item.id" :islocked="item.islocked" />
             </td>
-            <td>{{ item.updated_at }}</td>
-            <td v-if="item.size < 1024">{{ item.size }}KB</td>
-            <td v-else>{{ Math.round((item.size / 1024) * 10) / 10 }}MB</td>
+            <td class="list-view-updatedat">{{ item.updated_at }}</td>
+            <td v-if="item.size < 1024" class="list-view-size">
+              {{ item.size }}KB
+            </td>
+            <td v-else class="list-view-size">
+              {{ Math.round((item.size / 1024) * 10) / 10 }}MB
+            </td>
           </tr>
           <tr
             v-for="(item, index) in upload_queue"
@@ -212,5 +216,24 @@ export default {
 }
 .list-view::-webkit-scrollbar {
   display: none;
+}
+
+.list-view-checkbox {
+}
+.list-view-name {
+  width: 70%;
+  display: flex;
+  justify-content: space-between;
+}
+.list-view-name div {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.list-view-updatedat {
+  width: 150px;
+}
+.list-view-size {
+  width: 80px;
 }
 </style>
