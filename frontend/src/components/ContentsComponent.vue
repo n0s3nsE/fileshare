@@ -195,3 +195,11 @@ export default {
   },
 };
 </script>
+
+<style>
+.list-view {
+  width: 70%;
+  height: auto;
+  overflow-y: scroll;
+}
+</style>

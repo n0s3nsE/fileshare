@@ -45,6 +45,8 @@ export default {
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&family=Roboto:wght@100&display=swap");
 #app {
+  width: 100vh;
+  height: 100vh;
   font-family: "Roboto";
 
   padding: 0 80px;
