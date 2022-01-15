@@ -8,7 +8,6 @@ use App\Models\Content;
 
 class PreviewController extends Controller
 {
-    //
     public function show($param)
     {
         $ct = Content::find($param);
