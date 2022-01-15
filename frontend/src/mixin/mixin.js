@@ -13,7 +13,6 @@ export default {
     
     get_itemlist(folder) {
       folder = folder.replace(/\/*$/, "");
-      
       axios.get(this.show_api_url + folder)
         .then((response) => { 
           if(response.data.itemlist)

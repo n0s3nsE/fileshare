@@ -24,6 +24,16 @@ class ListAPIController extends Controller
         }
     }
 
+    public function detail($id)
+    {
+        $contents = Content::select("id", "name", "size", "isfolder", "islocked", "updated_at")->where("id", $id)->get();
+        if ($contents->isEmpty()) {
+            return response(json_encode(['msg' => 'Content not found.']), 404);
+        } else {
+            return response(json_encode(['detail' => $contents[0]]), 200);
+        }
+    }
+
     public function update(Request $request)
     {
         $id = $request->id;
