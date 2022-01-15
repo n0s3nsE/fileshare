@@ -67,11 +67,12 @@ export default {
   height: 50%;
   width: 100%;
   overflow-y: scroll;
-  scrollbar-width: none;
+  scrollbar-width: thin;
   overflow-wrap: anywhere;
   margin: 0 8px;
 }
 .preview-info::-webkit-scrollbar {
   display: none;
+  scrollbar-width: thin;
 }
 </style>

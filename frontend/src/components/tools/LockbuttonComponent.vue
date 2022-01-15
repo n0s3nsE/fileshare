@@ -70,3 +70,11 @@ export default {
   },
 };
 </script>
+
+<style>
+button {
+  background: white;
+  border: none;
+  padding: 0px;
+}
+</style>

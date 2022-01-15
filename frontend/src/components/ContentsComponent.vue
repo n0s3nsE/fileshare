@@ -52,16 +52,50 @@
               />
             </td>
             <td v-if="item.isfolder" class="list-view-name">
-              <div>
+              <div class="list-view-name-icon">
+                <svg
+                  width="26"
+                  height="22"
+                  viewBox="0 0 26 22"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M0 0H10L15 3H26V22H0V0Z" fill="#3C3C3C" />
+                </svg>
+              </div>
+              <div class="list-view-name-link">
                 <a :href="current_path + item.name">
                   {{ item.name }}
                 </a>
                 <rename-text-box v-if="rename_flag === item.id" />
               </div>
-              <lock-button :item_id="item.id" :islocked="item.islocked" />
+              <lock-button
+                :item_id="item.id"
+                :islocked="item.islocked"
+                class="list-view-name-lockbutton"
+              />
             </td>
             <td v-else class="list-view-name">
-              <div>
+              <div class="list-view-name-icon">
+                <svg
+                  width="22"
+                  height="26"
+                  viewBox="0 0 22 26"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M21.5 2V24C21.5 24.8284 20.8284 25.5 20 25.5H2C1.17157 25.5 0.5 24.8284 0.5 24V2C0.5 1.17157 1.17157 0.5 2 0.5H8.46154H15H20C20.8284 0.5 21.5 1.17157 21.5 2Z"
+                    fill="white"
+                    stroke="#3C3C3C"
+                  />
+                  <line x1="4" y1="5.5" x2="18" y2="5.5" stroke="#3C3C3C" />
+                  <line x1="4" y1="14.5" x2="18" y2="14.5" stroke="#3C3C3C" />
+                  <line x1="4" y1="19.5" x2="18" y2="19.5" stroke="#3C3C3C" />
+                  <line x1="4" y1="10.5" x2="18" y2="10.5" stroke="#3C3C3C" />
+                </svg>
+              </div>
+              <div class="list-view-name-link">
                 <a
                   :href="
                     '?id=' + item.id + '&type=' + item.name.split('.').pop()
@@ -71,7 +105,11 @@
                 </a>
                 <rename-text-box v-if="rename_flag === item.id" />
               </div>
-              <lock-button :item_id="item.id" :islocked="item.islocked" />
+              <lock-button
+                :item_id="item.id"
+                :islocked="item.islocked"
+                class="list-view-name-lockbutton"
+              />
             </td>
             <td class="list-view-updatedat">{{ item.updated_at }}</td>
             <td v-if="item.size < 1024" class="list-view-size">
@@ -208,31 +246,73 @@ export default {
   display: flex;
   padding: 8px 0;
 }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: white;
+  border-bottom: #666666 solid 2px;
+  position: sticky;
+  top: 0px;
+}
+
+td {
+  border-bottom: #666666 solid 1px;
+}
+
+a:link,
+a:visited {
+  color: #242424;
+  text-decoration: none;
+}
+
 .list-view {
   height: 100%;
   width: 75%;
   overflow-y: scroll;
-  scrollbar-width: none;
+  scrollbar-width: thin;
 }
+
 .list-view::-webkit-scrollbar {
   display: none;
+  scrollbar-width: thin;
 }
 
 .list-view-checkbox {
+  width: 30px;
 }
+
 .list-view-name {
-  width: 70%;
   display: flex;
   justify-content: space-between;
+  padding: 4px 8px;
 }
-.list-view-name div {
-  width: 100%;
+
+.list-view-name-icon {
+  width: 26px;
+}
+.list-view-name-icon svg {
+}
+
+.list-view-name-link {
+  width: 500px;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin: auto 8px;
 }
+
+.list-view-name-lockbutton {
+  width: 18px;
+  margin-left: auto;
+}
+
 .list-view-updatedat {
   width: 150px;
 }
+
 .list-view-size {
   width: 80px;
 }
