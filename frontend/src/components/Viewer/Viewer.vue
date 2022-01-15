@@ -52,7 +52,7 @@ export default {
         video: ["mp4", "avi", "wav", "mov", "wmv"],
         img: ["jpg", "jpeg", "png", "bmp", "gif", "svg"],
       },
-      this_file: null,
+      this_file: "",
       next_item: null,
       before_item: null,
       error_flag: false,
