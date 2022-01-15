@@ -2,7 +2,7 @@
   <div class="preview-sidepanel">
     <div class="preview-thumbnail">
       <img
-        v-if="thum"
+        v-if="typeof this_file.id !== 'undefined' && thum"
         :src="'http://127.0.0.1:8000/api/preview/' + this_file.id"
       />
     </div>
