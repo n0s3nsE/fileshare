@@ -49,3 +49,15 @@ export default {
   },
 };
 </script>
+
+<style>
+.path {
+  width: 100%;
+  font-size: 24px;
+}
+.path a:link,
+.path a:visited {
+  color: #545454;
+  text-decoration: none;
+}
+</style>
