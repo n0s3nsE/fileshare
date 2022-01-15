@@ -64,7 +64,7 @@
               <div>
                 <a
                   :href="
-                    '?view=' + item.id + '&ext=' + item.name.split('.').pop()
+                    '?view=' + item.id + '&type=' + item.name.split('.').pop()
                   "
                 >
                   {{ item.name }}
