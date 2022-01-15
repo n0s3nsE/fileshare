@@ -1,7 +1,7 @@
 <template>
   <div>
     <header class="preview-header">
-      <div><button>←</button></div>
+      <div><button @click="return_page()">←</button></div>
       <div>
         <p>{{ this_file.name }}</p>
       </div>
@@ -91,8 +91,10 @@ export default {
       const sp_param = param.split("&").map((i) => i.split("="));
       return Object.fromEntries(sp_param);
     },
-    create_itemlist(items) {
+    create_itemlist(itemlist) {
+      const items = itemlist.filter((i) => !i.isfolder);
       const items_length = items.length;
+
       const filter_id = (item, index) => {
         if (item.id === parseInt(this.param_id)) {
           this.this_file = item;
@@ -100,20 +102,24 @@ export default {
           if (index - 1 >= 0) {
             this.before_item = {
               id: items[index - 1].id,
-              type: item.name.split(".").pop(),
+              type: items[index - 1].name.split(".").pop(),
             };
           }
           if (index + 1 < items_length) {
             this.next_item = {
               id: items[index + 1].id,
-              type: item.name.split(".").pop(),
+              type: items[index + 1].name.split(".").pop(),
             };
           }
         } else {
           return false;
         }
       };
+
       items.filter(filter_id);
+    },
+    return_page() {
+      window.location.href = this.get_path();
     },
   },
 };
