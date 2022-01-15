@@ -47,3 +47,31 @@ export default {
   },
 };
 </script>
+
+<style>
+.preview-sidepanel {
+  height: calc(100vh - 96px);
+  width: 25%;
+}
+.preview-thumbnail {
+  height: 50%;
+  width: 100%;
+  margin: 0 8px;
+}
+.preview-thumbnail img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+.preview-info {
+  height: 50%;
+  width: 100%;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  overflow-wrap: anywhere;
+  margin: 0 8px;
+}
+.preview-info::-webkit-scrollbar {
+  display: none;
+}
+</style>

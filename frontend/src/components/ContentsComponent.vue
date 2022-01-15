@@ -1,5 +1,5 @@
 <template>
-  <div class="contents">
+  <div class="main">
     <div class="list-view">
       <div v-if="empty_folder">
         <span v-if="upload_queue.length === 0">空のフォルダ</span>
@@ -196,3 +196,21 @@ export default {
   },
 };
 </script>
+
+<style>
+.main {
+  height: calc(100vh - 96px);
+  width: 100%;
+  display: flex;
+  padding: 8px 0;
+}
+.list-view {
+  height: 100%;
+  width: 75%;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}
+.list-view::-webkit-scrollbar {
+  display: none;
+}
+</style>

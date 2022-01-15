@@ -40,7 +40,14 @@ export default {
 </script>
 
 <style>
+body {
+  margin: 0;
+}
 #app {
+  width: 100%;
+  height: 100%;
+}
+#contents {
   margin: 0 10%;
 }
 </style>
