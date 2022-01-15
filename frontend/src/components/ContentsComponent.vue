@@ -62,7 +62,11 @@
             </td>
             <td v-else>
               <div>
-                <a :href="'/content' + current_path + item.name">
+                <a
+                  :href="
+                    '?id=' + item.id + '&type=' + item.name.split('.').pop()
+                  "
+                >
                   {{ item.name }}
                 </a>
                 <rename-text-box v-if="rename_flag === item.id" />
@@ -84,16 +88,24 @@
         </tbody>
       </table>
     </div>
+    <side-panel
+      v-if="selected_items.length === 1"
+      :this_file_id="selected_items[0]"
+      :thum="true"
+    />
   </div>
 </template>
 <script>
 import Mixin from "../mixin/mixin";
 import RenameTextBox from "./tools/RenameComponent.vue";
 import LockButton from "./tools/LockbuttonComponent.vue";
+import SidePanel from "./SidePanelComponent.vue";
+
 export default {
   components: {
     RenameTextBox,
     LockButton,
+    SidePanel,
   },
   data() {
     return {
@@ -109,11 +121,7 @@ export default {
   },
   mixins: [Mixin],
   mounted() {
-    if (this.get_path() === "/") {
-      this.current_path = this.get_path();
-    } else {
-      this.current_path = this.get_path() + "/";
-    }
+    this.current_path = this.get_path();
     this.upload_queue = this.upload_queue_getters;
     this.items = this.itemlist_getters;
     this.selected_items = this.selected_items_getters;

@@ -24,6 +24,16 @@ class ListAPIController extends Controller
         }
     }
 
+    public function detail($id)
+    {
+        $contents = Content::select("id", "name", "size", "isfolder", "islocked", "updated_at")->where("id", $id)->get();
+        if ($contents->isEmpty()) {
+            return response(json_encode(['msg' => 'Content not found.']), 404);
+        } else {
+            return response(json_encode(['detail' => $contents[0]]), 200);
+        }
+    }
+
     public function update(Request $request)
     {
         $id = $request->id;
@@ -42,7 +52,7 @@ class ListAPIController extends Controller
             return response(json_encode(['msg' => 'Content is locked.']), 500);
         }
 
-        Storage::move('uploads' . $ct->path . '/' . $ct->name, 'uploads' . $ct->path . '/' . $new_name);
+        Storage::move('public/uploads' . $ct->path . '/' . $ct->name, 'public/uploads' . $ct->path . '/' . $new_name);
         if ($ct->isfolder) {
             $this->update_child_path($id, $new_name);
         }
@@ -97,13 +107,13 @@ class ListAPIController extends Controller
                             if ($delete_item->path === "/") {
                                 $delete_item->path = "";
                             }
-                            Storage::deleteDirectory("uploads{$delete_item->path}/{$delete_item->name}");
+                            Storage::deleteDirectory("public/uploads{$delete_item->path}/{$delete_item->name}");
                             $delete_item->delete();
                         } else {
                             array_push($failed_items, $ds);
                         }
                     } else {
-                        Storage::delete("uploads{$delete_item->path}/{$delete_item->name}");
+                        Storage::delete("public/uploads{$delete_item->path}/{$delete_item->name}");
                         $delete_item->delete();
                     }
                 } else {
@@ -134,7 +144,7 @@ class ListAPIController extends Controller
         if ($sub_file->exists()) {
             foreach ($sub_file->get() as $sfile) {
                 if (!$sfile->islocked) {
-                    Storage::delete("uploads{$sfile->path}/{$sfile->name}");
+                    Storage::delete("public/uploads{$sfile->path}/{$sfile->name}");
                 } else {
                     array_push($failed_items, ['id' => $sfile->id, 'detail' => 'Content is locked.']);
                 }
@@ -146,7 +156,7 @@ class ListAPIController extends Controller
                 if (!$sfolder->islocked) {
                     $res = $this->delete_subcontents($sfolder->id);
                     if (!$res) {
-                        Storage::deleteDirectory("uploads{$sfolder->path}/{$sfolder->name}");
+                        Storage::deleteDirectory("public/uploads{$sfolder->path}/{$sfolder->name}");
                         Content::find($sfolder->id)->delete();
                     } else {
                         array_push($failed_items, ['id' => $sfolder->id, 'detail' => 'Content is locked.']);
@@ -199,8 +209,8 @@ class ListAPIController extends Controller
         $content = new Content();
 
         try {
-            Storage::putFileAs('uploads' . $path, $data, $name);
-            $f_size = Storage::size('uploads' . $path . '/' . $name) / 1024; //KB
+            Storage::putFileAs('public/uploads' . $path, $data, $name);
+            $f_size = Storage::size('public/uploads' . $path . '/' . $name) / 1024; //KB
 
             $content->fill([
                 'name' => $name,
@@ -228,7 +238,7 @@ class ListAPIController extends Controller
             $data = $request->data;
             $name = $this->rename_same_filename($name, $path);
 
-            Storage::putFileAs('uploads' . $path, $data, "{$tmp_name}.tmp.{$index}");
+            Storage::putFileAs('public/uploads' . $path, $data, "{$tmp_name}.tmp.{$index}");
         }
     }
 
@@ -244,17 +254,17 @@ class ListAPIController extends Controller
 
             $tmp_name = $tmp_name . '.tmp';
             $index = 0;
-            while (Storage::exists("uploads{$path}/{$tmp_name}." . ($index + 1))) {
-                $f = Storage::get("uploads{$path}/{$tmp_name}." . ($index + 1));
-                $f2 = fopen(storage_path("app/uploads{$path}/{$tmp_name}.0"), "a");
+            while (Storage::exists("public/uploads{$path}/{$tmp_name}." . ($index + 1))) {
+                $f = Storage::get("public/uploads{$path}/{$tmp_name}." . ($index + 1));
+                $f2 = fopen(storage_path("app/public/uploads{$path}/{$tmp_name}.0"), "a");
                 fwrite($f2, $f);
                 fclose($f2);
 
-                Storage::delete("uploads{$path}/{$tmp_name}." . ($index + 1));
+                Storage::delete("public/uploads{$path}/{$tmp_name}." . ($index + 1));
                 $index += 1;
             }
-            Storage::move("uploads{$path}/{$tmp_name}.0", "uploads{$path}/{$name}");
-            $f_size = Storage::size("uploads{$path}/{$name}") / 1024; //KB
+            Storage::move("public/uploads{$path}/{$tmp_name}.0", "public/uploads{$path}/{$name}");
+            $f_size = Storage::size("public/uploads{$path}/{$name}") / 1024; //KB
 
             $content = new Content();
             $content->fill([
@@ -283,7 +293,7 @@ class ListAPIController extends Controller
         $new_folder_name = $this->rename_same_foldername($new_folder_name, $path);
 
         if ($this->check_folder_exists(substr($path, 1))) {
-            Storage::makeDirectory("uploads/" . $path . "/" . $new_folder_name);
+            Storage::makeDirectory("public/uploads/" . $path . "/" . $new_folder_name);
             $content = new Content();
             $content->fill([
                 'name' => $new_folder_name,
