@@ -113,7 +113,7 @@ export default {
   created() {
     const split_param = this.split_param(this.param);
     this.param_id = split_param.id;
-    this.param_type = split_param.type;
+    this.param_type = split_param.type.toLowerCase();
 
     if (
       typeof this.param_id !== "undefined" &&
