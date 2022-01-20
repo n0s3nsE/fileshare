@@ -284,6 +284,11 @@ tr {
   line-height: 50px;
 }
 
+.list-view-checkbox div {
+  display: flex;
+  justify-content: center;
+}
+
 .list-view-updatedat {
   width: 85px;
   padding: 0px 8px;
