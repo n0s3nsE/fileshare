@@ -43,13 +43,15 @@
         <tbody>
           <tr v-for="(item, index) in items" :key="index">
             <td class="list-view-checkbox">
-              <input
-                v-if="!item.islocked"
-                type="checkbox"
-                @change="select_change()"
-                :value="item.id"
-                v-model="selected_items"
-              />
+              <div>
+                <input
+                  v-if="!item.islocked"
+                  type="checkbox"
+                  @change="select_change()"
+                  :value="item.id"
+                  v-model="selected_items"
+                />
+              </div>
             </td>
             <td v-if="item.isfolder" class="list-view-name">
               <div class="list-view-name-icon">
@@ -111,7 +113,9 @@
                 class="list-view-name-lockbutton"
               />
             </td>
-            <td class="list-view-updatedat">{{ item.updated_at }}</td>
+            <td class="list-view-updatedat">
+              {{ item.updated_at }}
+            </td>
             <td v-if="item.size < 1024" class="list-view-size">
               {{ item.size }}KB
             </td>
@@ -244,7 +248,6 @@ export default {
   height: calc(100vh - 96px);
   width: 100%;
   display: flex;
-  padding: 8px 0;
 }
 
 table {
@@ -259,61 +262,52 @@ thead {
   top: 0px;
 }
 
-td {
-  border-bottom: #666666 solid 1px;
-}
-
-a:link,
-a:visited {
-  color: #242424;
-  text-decoration: none;
+tr {
+  height: 50px;
+  border-bottom: #6f6f6f solid 1px;
 }
 
 .list-view {
   height: 100%;
   width: 75%;
   overflow-y: scroll;
-  scrollbar-width: thin;
-}
-
-.list-view::-webkit-scrollbar {
-  display: none;
-  scrollbar-width: thin;
-}
-
-.list-view-checkbox {
-  width: 30px;
+  white-space: nowrap;
 }
 
 .list-view-name {
   display: flex;
-  justify-content: space-between;
-  padding: 4px 8px;
 }
 
 .list-view-name-icon {
-  width: 26px;
+  margin: auto 8px;
 }
-.list-view-name-icon svg {
+
+.list-view-name-lockbutton {
+  margin-left: auto;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .list-view-name-link {
   width: 500px;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin: auto 8px;
-}
-
-.list-view-name-lockbutton {
-  width: 18px;
-  margin-left: auto;
+  line-height: 50px;
 }
 
 .list-view-updatedat {
-  width: 150px;
+  width: 85px;
+  padding: 0px 8px;
 }
 
 .list-view-size {
-  width: 80px;
+  width: 50px;
+  text-align: center;
+}
+
+a:link,
+a:visited {
+  color: #2b2b2b;
+  text-decoration: none;
 }
 </style>
