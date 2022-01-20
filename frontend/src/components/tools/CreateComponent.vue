@@ -4,14 +4,18 @@
       <button @click="change_status(true)">作成</button>
     </div>
     <div v-if="cfm_status" class="create-folder-modal">
-      <input
-        type="text"
-        placeholder="フォルダ名を入力"
-        v-model="new_folder_name"
-        @keydown.enter="create_folder"
-      />
-      <button @click="create_folder">作成</button>
-      <button @click="change_status(false)">キャンセル</button>
+      <div class="modal-main">
+        <input
+          type="text"
+          placeholder="フォルダ名を入力"
+          v-model="new_folder_name"
+          @keydown.enter="create_folder"
+        />
+      </div>
+      <div class="modal-ctl">
+        <button @click="create_folder">作成</button>
+        <button @click="change_status(false)">キャンセル</button>
+      </div>
     </div>
   </div>
 </template>
@@ -48,3 +52,42 @@ export default {
   },
 };
 </script>
+
+<style>
+.create-folder-modal {
+  background-color: white;
+  width: 300px;
+  height: 200px;
+  border: 1px solid;
+  border-radius: 5px;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0;
+}
+.modal-main {
+  height: 75%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-ctl {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+
+  height: 25%;
+  background-color: #eeeeee;
+  border-top: 1px solid;
+
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+.modal-ctl button {
+  float: right;
+}
+</style>
