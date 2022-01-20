@@ -253,7 +253,7 @@ thead {
 
 tr {
   height: 50px;
-  border-bottom: #6f6f6f solid 1px;
+  border-bottom: #666666 solid 1px;
 }
 
 .list-view {
@@ -278,7 +278,7 @@ tr {
 }
 
 .list-view-name-link {
-  width: 500px;
+  max-width: 450px;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 50px;
