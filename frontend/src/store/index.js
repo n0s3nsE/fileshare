@@ -22,7 +22,6 @@ export default new Vuex.Store({
         itemlist: [],
         upload_queue: [],
         selected_items: [],
-        rename_flag: null,
         toolbar_status: true,
     },
     getters: {
@@ -34,9 +33,6 @@ export default new Vuex.Store({
         },
         get_selected_items: state => {
             return state.selected_items;
-        },
-        get_rename_flag: state => {
-            return state.rename_flag;
         },
         get_toolbar_status: state => {
             return state.toolbar_status;
@@ -54,9 +50,6 @@ export default new Vuex.Store({
         },
         selected_items_mutation(state, payload) {
             state.selected_items = payload.items;
-        },
-        rename_flag_mutation(state, payload) {
-            state.rename_flag = payload.id;
         },
         update_progress(state, payload){
             for(let i = 0; i < state.upload_queue.length; i++){

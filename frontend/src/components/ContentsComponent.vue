@@ -69,7 +69,6 @@
                 <a :href="current_path + item.name">
                   {{ item.name }}
                 </a>
-                <rename-text-box v-if="rename_flag === item.id" />
               </div>
               <lock-button
                 :item_id="item.id"
@@ -105,7 +104,6 @@
                 >
                   {{ item.name }}
                 </a>
-                <rename-text-box v-if="rename_flag === item.id" />
               </div>
               <lock-button
                 :item_id="item.id"
@@ -143,13 +141,11 @@
 </template>
 <script>
 import Mixin from "../mixin/mixin";
-import RenameTextBox from "./tools/RenameComponent.vue";
 import LockButton from "./tools/LockbuttonComponent.vue";
 import SidePanel from "./SidePanelComponent.vue";
 
 export default {
   components: {
-    RenameTextBox,
     LockButton,
     SidePanel,
   },
@@ -160,7 +156,6 @@ export default {
       current_path: "",
       selected_items: [],
       selected_all: false,
-      rename_flag: null,
       empty_folder: false,
       not_exists_folder: false,
     };
@@ -179,9 +174,6 @@ export default {
     },
     upload_queue_getters() {
       return this.$store.getters.get_upload_queue;
-    },
-    rename_flag_getters() {
-      return this.$store.getters.get_rename_flag;
     },
     selected_items_getters() {
       return this.$store.getters.get_selected_items;
@@ -221,9 +213,6 @@ export default {
     },
     selected_items_getters(value) {
       this.selected_items = value;
-    },
-    rename_flag_getters(value) {
-      this.rename_flag = value;
     },
   },
   methods: {

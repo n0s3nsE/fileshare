@@ -1,0 +1,36 @@
+.modal-window {
+  background-color: white;
+  width: 300px;
+  height: 200px;
+  border: 1px solid;
+  border-radius: 5px;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0;
+}
+.modal-main {
+  height: 75%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-ctl {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+
+  height: 25%;
+  background-color: #eeeeee;
+  border-top: 1px solid;
+
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+.modal-ctl button {
+  float: right;
+}
