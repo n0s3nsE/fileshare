@@ -1,6 +1,17 @@
 <template>
-  <div>
-    <input type="text" @keydown.enter="rename_item()" ref="new_name" />
+  <div class="modal-window rename-modal">
+    <div class="modal-main">
+      <input
+        type="text"
+        placeholder="新たなファイル名"
+        @keydown.enter="rename_item"
+        ref="new_name"
+      />
+    </div>
+    <div class="modal-ctl">
+      <button @click="rename_item">保存</button>
+      <button @click="close_modal">キャンセル</button>
+    </div>
   </div>
 </template>
 <script>
@@ -29,12 +40,15 @@ export default {
       });
       this.reload_itemlist();
     },
-    async reload_itemlist() {
-      this.$store.commit("rename_flag_mutation", {
-        id: null,
-      });
-      await this.get_itemlist(this.get_path());
+    reload_itemlist() {
+      this.get_itemlist(this.get_path());
+    },
+    close_modal() {
+      this.$emit("close_modal");
     },
   },
 };
 </script>
+<style>
+@import "../../css/Modal.css";
+</style>

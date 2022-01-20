@@ -39,4 +39,17 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto:wght@100&display=swap");
+body {
+  margin: 0;
+}
+#app {
+  width: 100%;
+  height: 100%;
+  font-family: "Open Sans", sans-serif;
+}
+#contents {
+  margin: 0 10%;
+}
+</style>

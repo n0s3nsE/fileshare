@@ -39,3 +39,23 @@ export default {
   },
 };
 </script>
+
+<style>
+.toolbar {
+  height: 39px;
+  border-bottom: #666666 1px solid;
+  display: flex;
+}
+.toolbar button {
+  background: #6070ff;
+  border: none;
+  border-radius: 0;
+  color: white;
+
+  margin-right: 8px;
+  padding: 8px;
+}
+.toolbar button:hover {
+  background: #4652bd;
+}
+</style>
