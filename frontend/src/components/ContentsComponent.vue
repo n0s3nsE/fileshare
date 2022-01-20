@@ -299,8 +299,8 @@ tr {
   text-align: center;
 }
 
-a:link,
-a:visited {
+.list-view-name-link a:link,
+.list-view-name-link a:visited {
   color: #2b2b2b;
   text-decoration: none;
 }
