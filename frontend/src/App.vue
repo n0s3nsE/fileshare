@@ -16,8 +16,7 @@ import store from "./store";
 
 import PathView from "./components/PathViewComponent.vue";
 import Toolbar from "./components/tools/ToolbarComponent.vue";
-//import ListView from "./components/ContentsComponent.vue";
-import ListView from "./components/ItemList/ItemListComponent.vue";
+import ListView from "./components/ContentsComponent.vue";
 import Viewer from "./components/Viewer/Viewer.vue";
 
 export default {

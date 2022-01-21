@@ -77,14 +77,13 @@
           </svg>
         </button>
       </div>
-      <preview-info-panel class="preview-info-panel" :this_file_id="param_id" />
+      <info-panel class="preview-info-panel" :this_file_id="param_id" />
     </div>
   </div>
 </template>
-
 <script>
 import Mixin from "../../mixin/mixin";
-import PreviewInfoPanel from "../InfoPanel/InfoPanel.vue";
+import InfoPanel from "./InfoPanel.vue";
 
 export default {
   props: ["param"],
@@ -103,7 +102,7 @@ export default {
     };
   },
   components: {
-    PreviewInfoPanel,
+    InfoPanel,
   },
   mixins: [Mixin],
   computed: {
