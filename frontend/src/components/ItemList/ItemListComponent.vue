@@ -24,7 +24,9 @@
           </tbody>
         </table>
       </div>
+
       <div v-else-if="not_exists_folder">存在しないフォルダ</div>
+
       <table v-else>
         <thead>
           <tr>
@@ -53,74 +55,20 @@
                 />
               </div>
             </td>
-            <td v-if="item.isfolder" class="list-view-name">
-              <div class="list-view-name-icon">
-                <svg
-                  width="26"
-                  height="22"
-                  viewBox="0 0 26 22"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M0 0H10L15 3H26V22H0V0Z" fill="#3C3C3C" />
-                </svg>
-              </div>
-              <div class="list-view-name-link">
-                <a :href="current_path + item.name">
-                  {{ item.name }}
-                </a>
-              </div>
-              <lock-button
-                :item_id="item.id"
-                :islocked="item.islocked"
-                class="list-view-name-lockbutton"
-              />
+            <td v-if="item.isfolder">
+              <folder-column :item="item" />
             </td>
-            <td v-else class="list-view-name">
-              <div class="list-view-name-icon">
-                <svg
-                  width="22"
-                  height="26"
-                  viewBox="0 0 22 26"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M21.5 2V24C21.5 24.8284 20.8284 25.5 20 25.5H2C1.17157 25.5 0.5 24.8284 0.5 24V2C0.5 1.17157 1.17157 0.5 2 0.5H8.46154H15H20C20.8284 0.5 21.5 1.17157 21.5 2Z"
-                    fill="white"
-                    stroke="#3C3C3C"
-                  />
-                  <line x1="4" y1="5.5" x2="18" y2="5.5" stroke="#3C3C3C" />
-                  <line x1="4" y1="14.5" x2="18" y2="14.5" stroke="#3C3C3C" />
-                  <line x1="4" y1="19.5" x2="18" y2="19.5" stroke="#3C3C3C" />
-                  <line x1="4" y1="10.5" x2="18" y2="10.5" stroke="#3C3C3C" />
-                </svg>
-              </div>
-              <div class="list-view-name-link">
-                <a
-                  :href="
-                    '?id=' + item.id + '&type=' + item.name.split('.').pop()
-                  "
-                >
-                  {{ item.name }}
-                </a>
-              </div>
-              <lock-button
-                :item_id="item.id"
-                :islocked="item.islocked"
-                class="list-view-name-lockbutton"
-              />
+            <td v-else :item="item">
+              <file-column :item="item" />
             </td>
             <td class="list-view-updatedat">
               {{ item.updated_at }}
             </td>
-            <td v-if="item.size < 1024" class="list-view-size">
-              {{ item.size }}KB
-            </td>
-            <td v-else class="list-view-size">
-              {{ Math.round((item.size / 1024) * 10) / 10 }}MB
+            <td class="list-view-size">
+              {{ size_convert(item.size) }}
             </td>
           </tr>
+
           <tr
             v-for="(item, index) in upload_queue"
             :key="'upload-queue-' + index"
@@ -132,22 +80,25 @@
         </tbody>
       </table>
     </div>
-    <side-panel
+    <info-panel
       v-if="selected_items.length === 1"
+      class="item-info"
       :this_file_id="selected_items[0]"
       :thum="true"
     />
   </div>
 </template>
 <script>
-import Mixin from "../mixin/mixin";
-import LockButton from "./tools/LockbuttonComponent.vue";
-import SidePanel from "./SidePanelComponent.vue";
+import Mixin from "../../mixin/mixin";
+import FolderColumn from "./FolderColumnComponent.vue";
+import FileColumn from "./FileColumnComponent.vue";
+import InfoPanel from "../InfoPanel/InfoPanel.vue";
 
 export default {
   components: {
-    LockButton,
-    SidePanel,
+    FolderColumn,
+    FileColumn,
+    InfoPanel,
   },
   data() {
     return {
@@ -228,6 +179,13 @@ export default {
         this.selected_all = false;
       }
     },
+    size_convert(size) {
+      if (size >= 1024) {
+        return Math.round((size / 1024) * 10) / 10 + "MB";
+      } else {
+        return size + "KB";
+      }
+    },
   },
 };
 </script>
@@ -244,9 +202,8 @@ table {
   border-collapse: collapse;
 }
 
-thead {
-  background: white;
-  border-bottom: #666666 solid 2px;
+thead th {
+  background: rgb(245, 245, 245);
   position: sticky;
   top: 0px;
 }
@@ -260,28 +217,8 @@ tr {
   height: 100%;
   width: 75%;
   overflow-y: scroll;
+  scrollbar-width: none;
   white-space: nowrap;
-}
-
-.list-view-name {
-  display: flex;
-}
-
-.list-view-name-icon {
-  margin: auto 8px;
-}
-
-.list-view-name-lockbutton {
-  margin-left: auto;
-  margin-top: auto;
-  margin-bottom: auto;
-}
-
-.list-view-name-link {
-  max-width: 450px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 50px;
 }
 
 .list-view-checkbox div {
@@ -303,5 +240,10 @@ tr {
 .list-view-name-link a:visited {
   color: #2b2b2b;
   text-decoration: none;
+}
+
+.item-info {
+  height: calc(100vh - 96px);
+  width: 25%;
 }
 </style>
