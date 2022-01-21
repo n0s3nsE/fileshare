@@ -1,16 +1,27 @@
 <template>
   <div class="path">
-    <span>
-      /
-      <a href="/">home</a>
-    </span>
-    <span v-for="(folder, index) in sp_current_path" :key="index">
-      /
-      <a :href="folder.url">
-        {{ folder.name }}
-      </a>
-    </span>
-    <span> / {{ current_folder }} </span>
+    <div>
+      <svg
+        class="path-folder-icon"
+        width="26"
+        height="22"
+        viewBox="0 0 26 22"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M0 0H10L15 3H26V22H0V0Z" fill="#eeeeee" />
+      </svg>
+      <span>
+        <a href="/">home</a>
+      </span>
+      <span v-for="(folder, index) in sp_current_path" :key="index">
+        /
+        <a :href="folder.url">
+          {{ folder.name }}
+        </a>
+      </span>
+      <span> / {{ current_folder }} </span>
+    </div>
   </div>
 </template>
 
@@ -52,13 +63,23 @@ export default {
 
 <style>
 .path {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   font-size: 24px;
   height: 40px;
+  color: #eeeeee;
+  background: #222222;
 }
+
+.path-folder-icon {
+  margin-right: 8px;
+}
+
 .path a:link,
 .path a:visited {
-  color: #545454;
+  color: #e6e6e6;
   text-decoration: none;
 }
 </style>

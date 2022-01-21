@@ -1,9 +1,9 @@
 <template>
   <div id="app">
-    <div v-if="!viewer_param" id="contents">
+    <div v-if="!viewer_param">
       <path-view />
-      <toolbar />
-      <list-view />
+      <toolbar class="contents" />
+      <item-list class="contents" />
     </div>
     <div v-else id="viewer">
       <viewer :param="viewer_param" />
@@ -16,8 +16,7 @@ import store from "./store";
 
 import PathView from "./components/PathViewComponent.vue";
 import Toolbar from "./components/tools/ToolbarComponent.vue";
-//import ListView from "./components/ContentsComponent.vue";
-import ListView from "./components/ItemList/ItemListComponent.vue";
+import ItemList from "./components/ItemList/ItemListComponent.vue";
 import Viewer from "./components/Viewer/Viewer.vue";
 
 export default {
@@ -26,7 +25,7 @@ export default {
   components: {
     PathView,
     Toolbar,
-    ListView,
+    ItemList,
     Viewer,
   },
   data() {
@@ -50,7 +49,7 @@ body {
   height: 100%;
   font-family: "Open Sans", sans-serif;
 }
-#contents {
+.contents {
   margin: 0 10%;
 }
 </style>
