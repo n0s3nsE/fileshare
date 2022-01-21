@@ -58,7 +58,8 @@ export default {
 .info-panel-thum {
   height: 50%;
   width: 100%;
-  margin: 0px 8px;
+
+  background: #222222;
 }
 .info-panel-thum img {
   height: 100%;
@@ -72,7 +73,7 @@ export default {
   overflow-y: scroll;
   scrollbar-width: none;
   overflow-wrap: anywhere;
-  margin: 0px 8px;
+  padding: 8px 8px;
 }
 
 .info-panel-main-nothum {
@@ -81,15 +82,20 @@ export default {
   overflow-y: scroll;
   scrollbar-width: none;
   overflow-wrap: anywhere;
-  margin: 0px 8px;
 
   background: #222222;
   color: #eeeeee;
 }
 
-.info-panel-main a,
-.info-panel-main a:visited {
+.info-panel-main-nothum a,
+.info-panel-main-nothum a:visited {
   color: #eeeeee;
+  text-decoration: none;
+}
+
+.info-panel-main-thum a,
+.info-panel-main-thum a:visited {
+  color: black;
   text-decoration: none;
 }
 </style>
