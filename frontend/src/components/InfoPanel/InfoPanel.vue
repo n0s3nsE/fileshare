@@ -73,7 +73,7 @@ export default {
   overflow-y: scroll;
   scrollbar-width: none;
   overflow-wrap: anywhere;
-  padding: 8px 8px;
+  padding: 8px 8px 0px 8px;
 }
 
 .info-panel-main-nothum {
