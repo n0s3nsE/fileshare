@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="list-view-name">
     <div class="list-view-name-icon">
       <svg
         width="22"
@@ -44,6 +44,10 @@ export default {
 </script>
 
 <style>
+.list-view-name {
+  display: flex;
+}
+
 .list-view-name-icon {
   margin: auto 8px;
 }

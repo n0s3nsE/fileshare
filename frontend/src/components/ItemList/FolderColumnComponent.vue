@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="list-view-name">
     <div class="list-view-name-icon">
       <svg
         width="26"
@@ -12,7 +12,7 @@
       </svg>
     </div>
     <div class="list-view-name-link">
-      <a :href="current_path + item.name">
+      <a :href="folder_url">
         {{ item.name }}
       </a>
     </div>
@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import Mixin from "../../mixin/mixin";
 import LockButton from "./LockbuttonComponent.vue";
 
 export default {
@@ -32,10 +33,27 @@ export default {
     LockButton,
   },
   props: ["item"],
+  data() {
+    return {
+      folder_url: "",
+    };
+  },
+  mixins: [Mixin],
+  mounted() {
+    const url = this.get_path();
+    if (url !== "/") {
+      this.folder_url = url + "/" + this.item.name;
+    } else {
+      this.folder_url = url + this.item.name;
+    }
+  },
 };
 </script>
 
 <style>
+.list-view-name {
+  display: flex;
+}
 .list-view-name-icon {
   margin: auto 8px;
 }

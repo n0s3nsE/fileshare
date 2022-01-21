@@ -24,7 +24,9 @@
           </tbody>
         </table>
       </div>
+
       <div v-else-if="not_exists_folder">存在しないフォルダ</div>
+
       <table v-else>
         <thead>
           <tr>
@@ -53,10 +55,10 @@
                 />
               </div>
             </td>
-            <td class="list-view-name" v-if="item.isfolder">
+            <td v-if="item.isfolder">
               <folder-column :item="item" />
             </td>
-            <td class="list-view-name" v-else :item="item">
+            <td v-else :item="item">
               <file-column :item="item" />
             </td>
             <td class="list-view-updatedat">
@@ -66,6 +68,7 @@
               {{ size_convert(item.size) }}
             </td>
           </tr>
+
           <tr
             v-for="(item, index) in upload_queue"
             :key="'upload-queue-' + index"
@@ -196,9 +199,8 @@ table {
   border-collapse: collapse;
 }
 
-thead {
-  background: white;
-  border-bottom: #666666 solid 2px;
+thead th {
+  background: rgb(245, 245, 245);
   position: sticky;
   top: 0px;
 }
@@ -218,10 +220,6 @@ tr {
 .list-view-checkbox div {
   display: flex;
   justify-content: center;
-}
-
-.list-view-name {
-  display: flex;
 }
 
 .list-view-updatedat {
