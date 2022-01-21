@@ -81,9 +81,10 @@
     </div>
   </div>
 </template>
+
 <script>
 import Mixin from "../../mixin/mixin";
-import PreviewInfoPanel from "./PreviewInfoPanel.vue";
+import PreviewInfoPanel from "../InfoPanel/InfoPanel.vue";
 
 export default {
   props: ["param"],

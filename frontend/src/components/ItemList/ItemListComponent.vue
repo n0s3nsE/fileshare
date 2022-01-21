@@ -80,8 +80,9 @@
         </tbody>
       </table>
     </div>
-    <side-panel
+    <info-panel
       v-if="selected_items.length === 1"
+      class="item-info"
       :this_file_id="selected_items[0]"
       :thum="true"
     />
@@ -91,11 +92,13 @@
 import Mixin from "../../mixin/mixin";
 import FolderColumn from "./FolderColumnComponent.vue";
 import FileColumn from "./FileColumnComponent.vue";
+import InfoPanel from "../InfoPanel/InfoPanel.vue";
 
 export default {
   components: {
     FolderColumn,
     FileColumn,
+    InfoPanel,
   },
   data() {
     return {
@@ -214,6 +217,7 @@ tr {
   height: 100%;
   width: 75%;
   overflow-y: scroll;
+  scrollbar-width: none;
   white-space: nowrap;
 }
 
@@ -236,5 +240,10 @@ tr {
 .list-view-name-link a:visited {
   color: #2b2b2b;
   text-decoration: none;
+}
+
+.item-info {
+  height: calc(100vh - 96px);
+  width: 25%;
 }
 </style>
