@@ -58,7 +58,6 @@ export default {
 .info-panel-thum {
   height: 50%;
   width: 100%;
-  margin: 0px 8px;
 
   background: #222222;
 }
@@ -74,7 +73,7 @@ export default {
   overflow-y: scroll;
   scrollbar-width: none;
   overflow-wrap: anywhere;
-  margin: 0px 8px;
+  padding: 8px 8px;
 }
 
 .info-panel-main-nothum {
@@ -83,7 +82,6 @@ export default {
   overflow-y: scroll;
   scrollbar-width: none;
   overflow-wrap: anywhere;
-  margin: 0px 8px;
 
   background: #222222;
   color: #eeeeee;

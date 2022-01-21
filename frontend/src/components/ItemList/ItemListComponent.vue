@@ -192,7 +192,7 @@ export default {
 
 <style>
 .main {
-  height: calc(100vh - 96px);
+  height: calc(100vh - 107px);
   width: 100%;
   display: flex;
 }
@@ -243,7 +243,7 @@ tr {
 }
 
 .item-info {
-  height: calc(100vh - 96px);
+  height: calc(100vh - 107px);
   width: 25%;
 }
 </style>

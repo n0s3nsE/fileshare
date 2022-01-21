@@ -2,8 +2,10 @@
   <div id="app">
     <div v-if="!viewer_param">
       <path-view />
-      <toolbar class="contents" />
-      <item-list class="contents" />
+      <div class="contents">
+        <toolbar />
+        <item-list />
+      </div>
     </div>
     <div v-else id="viewer">
       <viewer :param="viewer_param" />

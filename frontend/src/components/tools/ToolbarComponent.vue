@@ -43,8 +43,9 @@ export default {
 <style>
 .toolbar {
   height: 39px;
-  border-bottom: #666666 1px solid;
   display: flex;
+
+  padding: 8px 0px;
 }
 .toolbar button {
   background: #6070ff;

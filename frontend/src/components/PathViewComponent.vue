@@ -66,9 +66,10 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 40px;
   width: 100%;
   font-size: 24px;
-  height: 40px;
+
   color: #eeeeee;
   background: #222222;
 }
