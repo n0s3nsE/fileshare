@@ -34,5 +34,7 @@
   left: 0;
 }
 .modal-ctl button {
+  height: 36px;
+  width: 85px;
   float: right;
 }

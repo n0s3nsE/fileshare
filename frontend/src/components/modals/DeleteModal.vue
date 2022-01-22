@@ -4,8 +4,17 @@
       <p>削除しますか？</p>
     </div>
     <div class="modal-ctl">
-      <button @click="delete_items">削除</button>
-      <button @click="close_modal">キャンセル</button>
+      <button @click="delete_items" :disabled="deleting">
+        <div v-if="!deleting">削除</div>
+        <vue-loading
+          v-else
+          type="spin"
+          color="#333"
+          :size="{ width: '22px', height: '22px' }"
+        />
+      </button>
+
+      <button @click="close_modal" :disabled="deleting">キャンセル</button>
     </div>
   </div>
 </template>
@@ -13,12 +22,17 @@
 <script>
 import axios from "axios";
 import Mixin from "../../mixin/mixin";
+import { VueLoading } from "vue-loading-template";
 
 export default {
+  components: {
+    VueLoading,
+  },
   data() {
     return {
       selected_items: [],
       current_path: "",
+      deleting: false,
       delete_api_url: "http://127.0.0.1:8000/api/delete",
     };
   },
@@ -34,6 +48,7 @@ export default {
   },
   methods: {
     async delete_items() {
+      this.deleting = true;
       await axios.post(this.delete_api_url, {
         delete_items: this.selected_items,
       });
@@ -44,6 +59,7 @@ export default {
       this.get_itemlist(this.current_path);
     },
     close_modal() {
+      this.deleting = false;
       this.$emit("close_modal");
     },
   },
