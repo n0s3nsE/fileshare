@@ -2,7 +2,7 @@
   <div class="main">
     <div class="list-contents">
       <div v-if="not_exists_folder">存在しないフォルダ</div>
-      <div v-else class="list-view">
+      <div v-else class="list-view" @dragenter="drag_enter">
         <table>
           <thead>
             <tr>
@@ -19,7 +19,7 @@
               <th>サイズ</th>
             </tr>
           </thead>
-          <tbody @dragenter="drag_enter">
+          <tbody>
             <tr v-if="empty_folder && upload_queue.length === 0">
               <td></td>
               <td><div class="empty">空のフォルダ</div></td>
@@ -197,7 +197,7 @@ export default {
       this.drag_stat = false;
     },
     item_dropped(e) {
-      console.log(e.dataTransfer.files[0].name);
+      this.mixin_upload(e.dataTransfer.files);
       this.drag_stat = false;
     },
   },
