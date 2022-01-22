@@ -1,7 +1,20 @@
 <template>
   <div class="info-panel">
     <div v-if="thum" class="info-panel-thum">
-      <img :src="'http://127.0.0.1:8000/api/preview/' + this_file.id" />
+      <svg
+        v-if="this_file.isfolder"
+        width="100%"
+        height="100%"
+        viewBox="0 0 26 22"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M0 0H10L15 3H26V22H0V0Z" fill="#3C3C3C" />
+      </svg>
+      <img
+        v-else-if="this_file.isfolder === 0"
+        :src="'http://127.0.0.1:8000/api/preview/' + this_file.id"
+      />
     </div>
     <div :class="[thum ? 'info-panel-main-thum' : 'info-panel-main-nothum']">
       <p>ファイル名: {{ this_file.name }}</p>
@@ -36,6 +49,7 @@ export default {
         .then((response) => {
           return response.data.detail;
         });
+
       this.this_file = this.convart_dt([gt])[0];
     },
     size_convert(size) {
@@ -58,13 +72,13 @@ export default {
 .info-panel-thum {
   height: 50%;
   width: 100%;
-
-  background: #222222;
 }
+
 .info-panel-thum img {
   height: 100%;
   width: 100%;
   object-fit: contain;
+  background: #222222;
 }
 
 .info-panel-main-thum {
