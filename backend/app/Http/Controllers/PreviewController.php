@@ -14,7 +14,7 @@ class PreviewController extends Controller
         if (!is_null($ct) && !$ct->isfolder) {
             return response()->file("storage/uploads{$ct->path}/{$ct->name}");
         } else {
-            return response(json_encode(['msg' => 'File not found.']), 404);
+            return response(json_encode(['msg' => 'Content does not exist.']), 404);
         }
     }
 }

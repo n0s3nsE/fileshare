@@ -14,7 +14,7 @@ class ListAPIController extends Controller
         $contents = Content::select("id", "name", "size", "isfolder", "islocked", "updated_at")->where("path", "/" . $id)->get();
 
         if (!$this->check_folder_exists($id)) {
-            return response(json_encode(['msg' => 'not exists folder']), 404);
+            return response(json_encode(['msg' => 'Folder does not exist.']), 404);
         }
 
         if ($contents->isEmpty()) {
@@ -28,7 +28,7 @@ class ListAPIController extends Controller
     {
         $contents = Content::select("id", "name", "size", "isfolder", "islocked", "updated_at")->where("id", $id)->get();
         if ($contents->isEmpty()) {
-            return response(json_encode(['msg' => 'Content not found.']), 404);
+            return response(json_encode(['msg' => 'Content does not exist.']), 404);
         } else {
             return response(json_encode(['detail' => $contents[0]]), 200);
         }
@@ -117,10 +117,10 @@ class ListAPIController extends Controller
                         $delete_item->delete();
                     }
                 } else {
-                    array_push($failed_items, ['id' => $delete_item_id, 'detail' => 'Content is locked.']);
+                    array_push($failed_items, ['id' => $delete_item_id, 'reason' => 'Content is locked.']);
                 }
             } else {
-                array_push($failed_items, ['id' => $delete_item_id, 'detail' => 'Not exists content.']);
+                array_push($failed_items, ['id' => $delete_item_id, 'reason' => 'Content does not exist.']);
             }
         }
 
@@ -146,7 +146,7 @@ class ListAPIController extends Controller
                 if (!$sfile->islocked) {
                     Storage::delete("public/uploads{$sfile->path}/{$sfile->name}");
                 } else {
-                    array_push($failed_items, ['id' => $sfile->id, 'detail' => 'Content is locked.']);
+                    array_push($failed_items, ['id' => $sfile->id, 'reason' => 'Content is locked.']);
                 }
                 Content::where('path', "{$parent_folder->path}/{$parent_folder->name}")->where('isfolder', false)->where('islocked', false)->delete();
             }
@@ -159,10 +159,10 @@ class ListAPIController extends Controller
                         Storage::deleteDirectory("public/uploads{$sfolder->path}/{$sfolder->name}");
                         Content::find($sfolder->id)->delete();
                     } else {
-                        array_push($failed_items, ['id' => $sfolder->id, 'detail' => 'Content is locked.']);
+                        array_push($failed_items, ['id' => $sfolder->id, 'reason' => 'Content is locked.']);
                     }
                 } else {
-                    array_push($failed_items, ['id' => $sfolder->id, 'detail' => 'Content is locked.']);
+                    array_push($failed_items, ['id' => $sfolder->id, 'reason' => 'Content is locked.']);
                 }
             }
         }
@@ -177,7 +177,7 @@ class ListAPIController extends Controller
     public function store(Request $request)
     {
         if ($request->name == "" || $request->path == "") {
-            return response(['msg' => 'error'], 500);
+            return response(['msg' => 'error', 'reason' => 'Required parameters are empty.'], 500);
         }
 
         if ($this->check_folder_exists(substr($request->path, 1))) {
@@ -185,17 +185,17 @@ class ListAPIController extends Controller
                 if ($this->chunk_upload($request)) {
                     return response(json_encode(['msg' => 'success']), 200);
                 } else {
-                    return response(json_encode(['msg' => 'error', 500]));
+                    return response(json_encode(['msg' => 'error', 'detail' => 'File merge failed.']), 500);
                 }
             } else {
                 if ($this->upload($request)) {
                     return response(json_encode(['msg' => 'success']), 200);
                 } else {
-                    return response(json_encode(['msg' => 'error', 500]));
+                    return response(json_encode(['msg' => 'error', 'detail' => 'File upload failed.']), 500);
                 }
             }
         } else {
-            return response(json_encode(['msg' => 'not exists folder: ' . $request->path]), 500);
+            return response(json_encode(['msg' => 'error', 'detail' => ['reason' => 'Folder does not exist.', 'path' => $request->path]]), 500);
         }
     }
 
@@ -287,7 +287,7 @@ class ListAPIController extends Controller
         $path = $request->path;
 
         if ($new_folder_name == "" || $path == "") {
-            return response(['msg' => 'error'], 500);
+            return response(['msg' => 'error', 'reason' => 'Required parameters are empty.'], 500);
         }
 
         $new_folder_name = $this->rename_same_foldername($new_folder_name, $path);
@@ -304,7 +304,7 @@ class ListAPIController extends Controller
             ])->save();
             return response(json_encode(['msg' => 'success']), 200);
         } else {
-            return response(json_encode(['msg' => 'not exists folder: ' . $path]), 500);
+            return response(json_encode(['msg' => 'error', 'detail' => ['reason' => 'Folder does not exists.', 'path' => $request->path]]), 500);
         }
     }
 
@@ -315,7 +315,7 @@ class ListAPIController extends Controller
             $ct->fill(['islocked' => !$ct->islocked])->save();
             return response(json_encode(['msg' => 'success']), 200);
         } else {
-            return response(json_encode(['msg' => 'failed']), 500);
+            return response(json_encode(['msg' => 'failed', 'reason' => 'Content does not exists.']), 500);
         }
     }
 
