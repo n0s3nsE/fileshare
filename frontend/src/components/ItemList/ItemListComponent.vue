@@ -1,37 +1,14 @@
 <template>
   <div class="main">
     <div class="list-view">
-      <div v-if="empty_folder">
-        <span v-if="upload_queue.length === 0">空のフォルダ</span>
-        <table v-if="upload_queue.length > 0">
-          <thead>
-            <tr>
-              <th></th>
-              <th>ファイル名</th>
-              <th>更新</th>
-              <th>サイズ</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="(item, index) in upload_queue"
-              :key="'upload-queue-' + index"
-            >
-              <td></td>
-              <td>{{ item.name }}</td>
-              <td>{{ item.progress }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div v-else-if="not_exists_folder">存在しないフォルダ</div>
+      <div v-if="not_exists_folder">存在しないフォルダ</div>
 
       <table v-else>
         <thead>
           <tr>
             <th>
               <input
+                v-if="!empty_folder"
                 type="checkbox"
                 @change="select_all()"
                 v-model="selected_all"
@@ -43,7 +20,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, index) in items" :key="index">
+          <tr v-if="empty_folder && upload_queue.length === 0">
+            <td></td>
+            <td><div class="empty">空のフォルダ</div></td>
+            <td></td>
+            <td></td>
+          </tr>
+
+          <tr v-else v-for="(item, index) in items" :key="index">
             <td class="list-view-checkbox">
               <div>
                 <input
@@ -58,7 +42,7 @@
             <td v-if="item.isfolder">
               <folder-column :item="item" />
             </td>
-            <td v-else :item="item">
+            <td v-else>
               <file-column :item="item" />
             </td>
             <td class="list-view-updatedat">
@@ -73,9 +57,16 @@
             v-for="(item, index) in upload_queue"
             :key="'upload-queue-' + index"
           >
-            <td></td>
+            <td>
+              <vue-loading
+                type="spin"
+                color="#333"
+                :size="{ width: '22px', height: '22px' }"
+              />
+            </td>
             <td>{{ item.name }}</td>
-            <td>{{ item.progress }}</td>
+            <td></td>
+            <td>{{ item.progress }}%</td>
           </tr>
         </tbody>
       </table>
@@ -93,12 +84,14 @@ import Mixin from "../../mixin/mixin";
 import FolderColumn from "./FolderColumnComponent.vue";
 import FileColumn from "./FileColumnComponent.vue";
 import InfoPanel from "../InfoPanel/InfoPanel.vue";
+import { VueLoading } from "vue-loading-template";
 
 export default {
   components: {
     FolderColumn,
     FileColumn,
     InfoPanel,
+    VueLoading,
   },
   data() {
     return {
@@ -200,6 +193,7 @@ export default {
 table {
   width: 100%;
   border-collapse: collapse;
+  empty-cells: hide;
 }
 
 thead th {
@@ -245,5 +239,11 @@ tr {
 .item-info {
   height: calc(100vh - 107px);
   width: 25%;
+}
+
+.empty {
+  display: flex;
+  justify-content: center;
+  line-height: 50px;
 }
 </style>
