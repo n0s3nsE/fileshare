@@ -1,75 +1,85 @@
 <template>
   <div class="main">
-    <div class="list-view">
+    <div class="list-contents">
       <div v-if="not_exists_folder">存在しないフォルダ</div>
-
-      <table v-else>
-        <thead>
-          <tr>
-            <th>
-              <input
-                v-if="!empty_folder"
-                type="checkbox"
-                @change="select_all()"
-                v-model="selected_all"
-              />
-            </th>
-            <th>ファイル名</th>
-            <th>更新</th>
-            <th>サイズ</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-if="empty_folder && upload_queue.length === 0">
-            <td></td>
-            <td><div class="empty">空のフォルダ</div></td>
-            <td></td>
-            <td></td>
-          </tr>
-
-          <tr v-else v-for="(item, index) in items" :key="index">
-            <td class="list-view-checkbox">
-              <div>
+      <div v-else class="list-view">
+        <table>
+          <thead>
+            <tr>
+              <th>
                 <input
-                  v-if="!item.islocked"
+                  v-if="!empty_folder"
                   type="checkbox"
-                  @change="select_change()"
-                  :value="item.id"
-                  v-model="selected_items"
+                  @change="select_all()"
+                  v-model="selected_all"
                 />
-              </div>
-            </td>
-            <td v-if="item.isfolder">
-              <folder-column :item="item" />
-            </td>
-            <td v-else>
-              <file-column :item="item" />
-            </td>
-            <td class="list-view-updatedat">
-              {{ item.updated_at }}
-            </td>
-            <td class="list-view-size">
-              {{ size_convert(item.size) }}
-            </td>
-          </tr>
+              </th>
+              <th>ファイル名</th>
+              <th>更新</th>
+              <th>サイズ</th>
+            </tr>
+          </thead>
+          <tbody @dragenter="drag_enter">
+            <tr v-if="empty_folder && upload_queue.length === 0">
+              <td></td>
+              <td><div class="empty">空のフォルダ</div></td>
+              <td></td>
+              <td></td>
+            </tr>
 
-          <tr
-            v-for="(item, index) in upload_queue"
-            :key="'upload-queue-' + index"
-          >
-            <td>
-              <vue-loading
-                type="spin"
-                color="#333"
-                :size="{ width: '22px', height: '22px' }"
-              />
-            </td>
-            <td>{{ item.name }}</td>
-            <td></td>
-            <td>{{ item.progress }}%</td>
-          </tr>
-        </tbody>
-      </table>
+            <tr v-else v-for="(item, index) in items" :key="index">
+              <td class="list-view-checkbox">
+                <div>
+                  <input
+                    v-if="!item.islocked"
+                    type="checkbox"
+                    @change="select_change()"
+                    :value="item.id"
+                    v-model="selected_items"
+                  />
+                </div>
+              </td>
+              <td v-if="item.isfolder">
+                <folder-column :item="item" />
+              </td>
+              <td v-else>
+                <file-column :item="item" />
+              </td>
+              <td class="list-view-updatedat">
+                {{ item.updated_at }}
+              </td>
+              <td class="list-view-size">
+                {{ size_convert(item.size) }}
+              </td>
+            </tr>
+
+            <tr
+              v-for="(item, index) in upload_queue"
+              :key="'upload-queue-' + index"
+            >
+              <td>
+                <vue-loading
+                  type="spin"
+                  color="#333"
+                  :size="{ width: '22px', height: '22px' }"
+                />
+              </td>
+              <td>{{ item.name }}</td>
+              <td></td>
+              <td>{{ item.progress }}%</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div
+          v-if="drag_stat"
+          class="drop-zone"
+          :class="[drag_stat ? 'drop-zone-enable' : null]"
+          @dragleave="drag_leave"
+          @dragover.prevent
+          @drop.prevent="item_dropped"
+        />
+      </div>
     </div>
     <info-panel
       v-if="selected_items.length === 1"
@@ -102,6 +112,7 @@ export default {
       selected_all: false,
       empty_folder: false,
       not_exists_folder: false,
+      drag_stat: false,
     };
   },
   mixins: [Mixin],
@@ -179,6 +190,16 @@ export default {
         return size + "KB";
       }
     },
+    drag_enter() {
+      this.drag_stat = true;
+    },
+    drag_leave() {
+      this.drag_stat = false;
+    },
+    item_dropped(e) {
+      console.log(e.dataTransfer.files[0].name);
+      this.drag_stat = false;
+    },
   },
 };
 </script>
@@ -207,12 +228,18 @@ tr {
   border-bottom: #666666 solid 1px;
 }
 
-.list-view {
+.list-contents {
   height: 100%;
   width: 75%;
   overflow-y: scroll;
   scrollbar-width: none;
   white-space: nowrap;
+}
+
+.list-view {
+  height: 100%;
+  width: 100%;
+  position: relative;
 }
 
 .list-view-checkbox div {
@@ -245,5 +272,17 @@ tr {
   display: flex;
   justify-content: center;
   line-height: 50px;
+}
+
+.drop-zone {
+  height: 100%;
+  width: 100%;
+  top: 0px;
+
+  position: absolute;
+}
+
+.drop-zone-enable {
+  background: #22222244;
 }
 </style>

@@ -53,5 +53,6 @@ body {
 }
 .contents {
   margin: 0 10%;
+  position: relative;
 }
 </style>
