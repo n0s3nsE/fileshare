@@ -1,7 +1,10 @@
 <template>
   <div v-if="notifications.length" class="notification-modal">
-    <div class="notification-modal-main">
-      <p v-for="(n, i) in notifications" :key="i">{{ n.detail }}</p>
+    <div class="notification-modal-main" @click="open_detail_modal">
+      <p v-if="notifications.length < 10">
+        {{ notifications.length }}件の新しい通知
+      </p>
+      <p v-else>10件以上の新しい通知</p>
     </div>
     <div class="notification-modal-ctl">
       <button @click="close_modal">
@@ -48,6 +51,11 @@ export default {
     close_modal() {
       this.$store.commit("remove_notification_mutation");
     },
+    open_detail_modal() {
+      this.$store.commit("change_ndms_mutation", {
+        status: true,
+      });
+    },
   },
 };
 </script>
@@ -55,11 +63,12 @@ export default {
 .notification-modal {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 
   background-color: #3c3c3c;
   color: white;
   width: 300px;
-  height: 50px;
+  height: 29px;
 
   position: absolute;
   bottom: 0;
@@ -69,14 +78,21 @@ export default {
 }
 
 .notification-modal-main {
-  display: flex;
-  align-items: center;
+  width: 271px;
   padding-left: 16px;
 }
 
+.notification-modal-main:hover {
+  background-color: #4c4c4c;
+}
+
+.notification-modal-main p {
+  margin: 0px;
+}
+
 .notification-modal-ctl {
-  width: 25px;
-  height: 25px;
+  width: 29px;
+  height: 29px;
 }
 
 .notification-modal-ctl:hover {
@@ -90,8 +106,7 @@ export default {
 
   color: white;
   background: none;
-  font-size: 24px;
-  width: 25px;
-  height: 25px;
+  width: 29px;
+  height: 29px;
 }
 </style>

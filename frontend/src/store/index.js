@@ -9,6 +9,7 @@ export default new Vuex.Store({
         selected_items: [],
         toolbar_status: true,
         notification: [],
+        notification_detail_modal_status: false,
     },
     getters: {
         get_itemlist: state => {
@@ -25,6 +26,9 @@ export default new Vuex.Store({
         },
         get_notification: state => {
             return state.notification;
+        },
+        get_notification_detail_modal_status: state => {
+            return state.notification_detail_modal_status;
         }
     },
     mutations: {
@@ -58,6 +62,9 @@ export default new Vuex.Store({
         },
         remove_notification_mutation(state) {
             state.notification = [];
+        },
+        change_ndms_mutation(state, payload) {
+            state.notification_detail_modal_status = payload.status;
         }
     },
 });
