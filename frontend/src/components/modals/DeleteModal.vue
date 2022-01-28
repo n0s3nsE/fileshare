@@ -34,9 +34,18 @@ export default {
   },
   methods: {
     async delete_items() {
-      await axios.post(this.delete_api_url, {
-        delete_items: this.selected_items,
-      });
+      await axios
+        .post(this.delete_api_url, {
+          delete_items: this.selected_items,
+        })
+        .then((response) => {
+          this.add_notification(response.status, "削除成功");
+        })
+        .catch((error) => {
+          error.response.data.detail.map((d) => {
+            this.add_notification(error.response.status, d);
+          });
+        });
       this.reload_itemlist();
     },
     reload_itemlist() {

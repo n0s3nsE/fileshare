@@ -7,10 +7,10 @@
   </div>
 </template>
 <script>
-import UploadButton from "./UploadComponent.vue";
-import CreateButton from "./CreateComponent.vue";
-import DeleteButton from "./DeleteComponent.vue";
-import RenameButton from "./RenameButtonComponent.vue";
+import UploadButton from "./utils/UploadComponent.vue";
+import CreateButton from "./utils/CreateComponent.vue";
+import DeleteButton from "./utils/DeleteComponent.vue";
+import RenameButton from "./utils/RenameButtonComponent.vue";
 
 export default {
   components: {

@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import Mixin from "../mixin/mixin";
+import Mixin from "../../mixin/mixin";
 
 export default {
   data() {

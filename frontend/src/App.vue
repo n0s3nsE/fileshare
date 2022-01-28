@@ -6,6 +6,7 @@
         <toolbar />
         <item-list />
       </div>
+      <notification-modal />
     </div>
     <div v-else id="viewer">
       <viewer :param="viewer_param" />
@@ -16,10 +17,11 @@
 <script>
 import store from "./store";
 
-import PathView from "./components/PathViewComponent.vue";
+import PathView from "./components/PathView/PathViewComponent.vue";
 import Toolbar from "./components/tools/ToolbarComponent.vue";
 import ItemList from "./components/ItemList/ItemListComponent.vue";
 import Viewer from "./components/Viewer/Viewer.vue";
+import NotificationModal from "./components/modals/NotificationModal.vue";
 
 export default {
   name: "App",
@@ -29,12 +31,14 @@ export default {
     Toolbar,
     ItemList,
     Viewer,
+    NotificationModal,
   },
   data() {
     return {
       viewer_param: "",
     };
   },
+
   mounted() {
     this.viewer_param = window.location.search.substring(1);
   },

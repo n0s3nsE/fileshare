@@ -4,25 +4,11 @@ import Vuex from "vuex";
 Vue.use(Vuex);
 export default new Vuex.Store({
     state: {
-        /*
-        itemlist: {
-            id: int, //require, PK
-            name: string, //require
-            updatedAt: datetime, //require
-            size: int,
-            isfolder: boolean, //require
-            islocked: boolean, //require
-        },
-        upload_queue: {
-            id: int,
-            name: string,
-            progress: int
-        }
-        */
         itemlist: [],
         upload_queue: [],
         selected_items: [],
         toolbar_status: true,
+        notification: [],
     },
     getters: {
         get_itemlist: state => {
@@ -36,6 +22,9 @@ export default new Vuex.Store({
         },
         get_toolbar_status: state => {
             return state.toolbar_status;
+        },
+        get_notification: state => {
+            return state.notification;
         }
     },
     mutations: {
@@ -60,6 +49,15 @@ export default new Vuex.Store({
         },
         toolbar_status_mutation(state, payload){
             state.toolbar_status = payload.stat;
+        },
+        add_notification_mutation(state, payload) {
+            state.notification.push({
+                status_code: payload.notification.status_code,
+                detail: payload.notification.detail,
+            });
+        },
+        remove_notification_mutation(state) {
+            state.notification = [];
         }
     },
 });
