@@ -55,8 +55,14 @@ export default new Vuex.Store({
             state.toolbar_status = payload.stat;
         },
         add_notification_mutation(state, payload) {
+            if(state.notification.length > 0){
+                if(state.notification[0].type !== payload.notification.type){
+                    state.notification = [];
+                }
+            }
             state.notification.push({
                 status_code: payload.notification.status_code,
+                type: payload.notification.type,
                 detail: payload.notification.detail,
             });
         },

@@ -1,10 +1,10 @@
 <template>
   <div v-if="notifications.length" class="notification-modal">
     <div class="notification-modal-main" @click="open_detail_modal">
-      <p v-if="notifications.length < 10">
-        {{ notifications.length }}件の新しい通知
+      <p v-if="errors.length > 0">
+        {{ type[errors[0].type] }}失敗 [クリックで詳細]
       </p>
-      <p v-else>10件以上の新しい通知</p>
+      <p v-else>{{ type[notifications[0].type] }}成功</p>
     </div>
     <div class="notification-modal-ctl">
       <button @click="close_modal">
@@ -32,6 +32,13 @@ export default {
   data() {
     return {
       notifications: [],
+      errors: [],
+      type: {
+        upload: "アップロード",
+        delete: "削除",
+        rename: "更新",
+        create: "作成",
+      },
     };
   },
   computed: {
@@ -42,6 +49,9 @@ export default {
   watch: {
     notification_getters() {
       this.notifications = this.notification_getters;
+      this.errors = this.notifications.filter(
+        (i) => i.status_code === 404 || i.status_code === 500
+      );
     },
   },
   created() {
@@ -52,9 +62,11 @@ export default {
       this.$store.commit("remove_notification_mutation");
     },
     open_detail_modal() {
-      this.$store.commit("change_ndms_mutation", {
-        status: true,
-      });
+      if (this.notifications.filter((i) => i.status_code !== 200).length > 0) {
+        this.$store.commit("change_ndms_mutation", {
+          status: true,
+        });
+      }
     },
   },
 };
@@ -67,7 +79,7 @@ export default {
 
   background-color: #3c3c3c;
   color: white;
-  width: 300px;
+  width: 350px;
   height: 29px;
 
   position: absolute;
@@ -78,7 +90,7 @@ export default {
 }
 
 .notification-modal-main {
-  width: 271px;
+  width: 321px;
   padding-left: 16px;
 }
 

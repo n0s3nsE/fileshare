@@ -64,8 +64,6 @@ export default {
           updated_at: updated_at
         }
       });
-      
-
     },
 
     mixin_upload(files) {
@@ -106,9 +104,9 @@ export default {
           },
         });
         
-        this.add_notification(response.status, "アップロード成功");
+        this.add_notification(response.status, "upload");
       }).catch((error) => {
-        this.add_notification(error.response.status, error.response.data.msg);
+        this.add_notification(error.response.status, "upload", error.response.data.detail);
       });
     },
     file_slice(file, index) {
@@ -156,7 +154,7 @@ export default {
                 },
               })
             }).catch((error) => {
-              this.add_notification(error.response.status, error.response.data.detail);
+              this.add_notification(error.response.status, "upload", error.response.data.detail);
             });
         })
       );
@@ -180,16 +178,17 @@ export default {
             progress: 100,
           },
         });
-        this.add_notification(response.status, "アップロード成功");
+        this.add_notification(response.status, "upload");
         })
         .catch((error) => {
-          this.add_notification(error.response.status, error.response.data.detail);
+          this.add_notification(error.response.status, "upload", error.response.data.detail);
         });
     },
-    add_notification(status_code, detail=undefined) {
+    add_notification(status_code, type, detail=undefined) {
       this.$store.commit("add_notification_mutation", {
         notification: {
           status_code: status_code,
+          type: type,
           detail: detail,
         },
       });

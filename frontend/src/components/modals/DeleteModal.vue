@@ -39,17 +39,17 @@ export default {
           delete_items: this.selected_items,
         })
         .then((response) => {
-          this.add_notification(response.status, "削除成功");
+          this.add_notification(response.status, "delete");
         })
         .catch((error) => {
           error.response.data.detail.map((d) => {
-            this.add_notification(error.response.status, d);
+            this.add_notification(error.response.status, "delete", d);
           });
         });
+      this.close_modal();
       this.reload_itemlist();
     },
     reload_itemlist() {
-      this.close_modal();
       this.get_itemlist(this.current_path);
     },
     close_modal() {
