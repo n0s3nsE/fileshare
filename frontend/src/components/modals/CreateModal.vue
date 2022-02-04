@@ -38,11 +38,22 @@ export default {
       this.new_folder_name = "";
     },
     async create_folder() {
-      await axios.post(this.create_api_url, {
-        new_folder_name: this.new_folder_name,
-        path: this.current_path,
-      });
-      await this.get_itemlist(this.current_path);
+      await axios
+        .post(this.create_api_url, {
+          new_folder_name: this.new_folder_name,
+          path: this.current_path,
+        })
+        .then((response) => {
+          this.add_notification(response.status, "create");
+        })
+        .catch((error) => {
+          this.add_notification(
+            error.response.status,
+            "create",
+            error.response.data.detail
+          );
+        });
+      this.get_itemlist(this.current_path);
       this.close_modal();
     },
   },

@@ -64,8 +64,6 @@ export default {
           updated_at: updated_at
         }
       });
-      
-
     },
 
     mixin_upload(files) {
@@ -98,13 +96,17 @@ export default {
       formData.append("path", this.get_path());
       formData.append("data", file);
 
-      axios.post(this.upload_api_url, formData).then(() => {
+      axios.post(this.upload_api_url, formData).then((response) => {
         this.$store.commit("update_progress", {
           item: {
             id: index,
             progress: 100,
           },
         });
+        
+        this.add_notification(response.status, "upload");
+      }).catch((error) => {
+        this.add_notification(error.response.status, "upload", error.response.data.detail);
       });
     },
     file_slice(file, index) {
@@ -142,23 +144,23 @@ export default {
           formData.append("index", i);
           formData.append("data", f.data);
 
-          try {
-            await axios.post(this.upload_api_url, formData);
-            finish_chunk += 1;
-
-            this.$store.commit("update_progress", {
-              item: {
-                id: index,
-                progress: Math.floor((finish_chunk / sl_ct) * 100) - 1,
-              },
+            await axios.post(this.upload_api_url, formData)
+            .then(() => {
+              finish_chunk += 1;
+              this.$store.commit("update_progress", {
+                item: {
+                  id: index,
+                  progress: Math.floor((finish_chunk / sl_ct) * 100) - 1,
+                },
+              })
+            }).catch((error) => {
+              this.add_notification(error.response.status, "upload", error.response.data.detail);
             });
-          } catch (error) {}
         })
       );
       this.send_endchunk_flag(file[0].name, slice_tmpname, index);
     },
     async send_endchunk_flag(name, tmp_name, index) {
-      try {
         await axios.post(
           this.upload_api_url,
           {
@@ -168,14 +170,28 @@ export default {
             endflag: true,
           },
           this.axios_headers
-        );
+        )
+        .then((response) => {
         this.$store.commit("update_progress", {
           item: {
             id: index,
             progress: 100,
           },
         });
-      } catch (error) {}
+        this.add_notification(response.status, "upload");
+        })
+        .catch((error) => {
+          this.add_notification(error.response.status, "upload", error.response.data.detail);
+        });
     },
+    add_notification(status_code, type, detail=undefined) {
+      this.$store.commit("add_notification_mutation", {
+        notification: {
+          status_code: status_code,
+          type: type,
+          detail: detail,
+        },
+      });
+    }
   },
 };

@@ -34,10 +34,22 @@ export default {
   methods: {
     async rename_item() {
       this.selected_item = this.selected_item_getters;
-      await axios.post(this.rename_api_url, {
-        id: this.selected_item,
-        new_name: this.$refs.new_name.value,
-      });
+      await axios
+        .post(this.rename_api_url, {
+          id: this.selected_item,
+          new_name: this.$refs.new_name.value,
+        })
+        .then((response) => {
+          this.add_notification(response.status, "rename");
+        })
+        .catch((error) => {
+          this.add_notification(
+            error.response.status,
+            "rename",
+            error.response.data.detail
+          );
+        });
+      this.close_modal();
       this.reload_itemlist();
     },
     reload_itemlist() {
