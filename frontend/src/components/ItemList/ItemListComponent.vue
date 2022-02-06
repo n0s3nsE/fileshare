@@ -1,17 +1,17 @@
 <template>
   <div class="main">
     <div class="list-contents">
-      <div v-if="not_exists_folder">存在しないフォルダ</div>
-      <div v-else class="list-view" @dragenter="drag_enter">
+      <div v-if="notExistsFolder">存在しないフォルダ</div>
+      <div v-else class="list-view" @dragenter="dragEnter">
         <table>
           <thead>
             <tr>
               <th>
                 <input
-                  v-if="!empty_folder"
+                  v-if="!emptyFolder"
                   type="checkbox"
-                  @change="select_all()"
-                  v-model="selected_all"
+                  @change="selectAll()"
+                  v-model="selectedAll"
                 />
               </th>
               <th>ファイル名</th>
@@ -20,7 +20,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-if="empty_folder && upload_queue.length === 0">
+            <tr v-if="emptyFolder && uploadQueue.length === 0">
               <td></td>
               <td><div class="empty">空のフォルダ</div></td>
               <td></td>
@@ -33,9 +33,9 @@
                   <input
                     v-if="!item.islocked"
                     type="checkbox"
-                    @change="select_change()"
+                    @change="selectChange()"
                     :value="item.id"
-                    v-model="selected_items"
+                    v-model="selectedItems"
                   />
                 </div>
               </td>
@@ -49,12 +49,12 @@
                 {{ item.updated_at }}
               </td>
               <td class="list-view-size">
-                {{ size_convert(item.size) }}
+                {{ sizeConvert(item.size) }}
               </td>
             </tr>
 
             <tr
-              v-for="(item, index) in upload_queue"
+              v-for="(item, index) in uploadQueue"
               :key="'upload-queue-' + index"
             >
               <td>
@@ -72,19 +72,19 @@
         </table>
 
         <div
-          v-if="drag_stat"
+          v-if="dragStat"
           class="drop-zone"
-          :class="[drag_stat ? 'drop-zone-enable' : null]"
-          @dragleave="drag_leave"
+          :class="[dragStat ? 'drop-zone-enable' : null]"
+          @dragleave="dragLeave"
           @dragover.prevent
-          @drop.prevent="item_dropped"
+          @drop.prevent="itemDropped"
         />
       </div>
     </div>
     <info-panel
-      v-if="selected_items.length === 1"
+      v-if="selectedItems.length === 1"
       class="item-info"
-      :this_file_id="selected_items[0]"
+      :thisFileId="selectedItems[0]"
       :thum="true"
     />
   </div>
@@ -106,99 +106,98 @@ export default {
   data() {
     return {
       items: [],
-      upload_queue: [],
-      current_path: "",
-      selected_items: [],
-      selected_all: false,
-      empty_folder: false,
-      not_exists_folder: false,
-      drag_stat: false,
+      uploadQueue: [],
+      currentPath: "",
+      selectedItems: [],
+      selectedAll: false,
+      emptyFolder: false,
+      notExistsFolder: false,
+      dragStat: false,
     };
   },
   mixins: [Mixin],
   mounted() {
-    this.current_path = this.get_path();
-    this.upload_queue = this.upload_queue_getters;
-    this.items = this.itemlist_getters;
-    this.selected_items = this.selected_items_getters;
-    this.get_itemlist(this.current_path);
+    this.currentPath = this.getPath();
+    this.uploadQueue = this.uploadQueueGetters;
+    this.items = this.itemListGetters;
+    this.selectedItems = this.selectedItemsGetters;
+    this.getItemList(this.currentPath);
   },
   computed: {
-    itemlist_getters() {
-      return this.$store.getters.get_itemlist;
+    itemListGetters() {
+      return this.$store.getters.getItemList;
     },
-    upload_queue_getters() {
-      return this.$store.getters.get_upload_queue;
+    uploadQueueGetters() {
+      return this.$store.getters.getUploadQueue;
     },
-    selected_items_getters() {
-      return this.$store.getters.get_selected_items;
+    selectedItemsGetters() {
+      return this.$store.getters.getSelectedItems;
     },
   },
   watch: {
-    itemlist_getters() {
-      this.items = this.itemlist_getters;
+    itemListGetters() {
+      this.items = this.itemListGetters;
       if (this.items === undefined) {
-        this.empty_folder = true;
+        this.emptyFolder = true;
       } else if (this.items[0].iserror) {
-        this.not_exists_folder = true;
+        this.notExistsFolder = true;
       } else {
-        this.empty_folder = false;
-        this.not_exists_folder = false;
+        this.emptyFolder = false;
+        this.notExistsFolder = false;
       }
-      this.selected_all = false;
+      this.selectedAll = false;
     },
-    upload_queue: {
+    uploadQueue: {
       handler: function (value) {
-        this.upload_queue = value;
+        this.uploadQueue = value;
         const fi = value.findIndex((e) => e.progress == 100);
         if (fi >= 0) {
-          //upload completed
-          this.get_itemlist(this.current_path);
-          this.$store.commit("remove_upload_queue_mutation", {
+          this.getItemList(this.currentPath);
+          this.$store.commit("removeUploadQueueMutation", {
             id: value[fi].id,
           });
         }
       },
       deep: true,
     },
-    selected_items() {
-      this.$store.commit("selected_items_mutation", {
-        items: this.selected_items,
+    selectedItems() {
+      this.$store.commit("selectedItemsMutation", {
+        items: this.selectedItems,
       });
     },
-    selected_items_getters(value) {
-      this.selected_items = value;
+    selectedItemsGetters(value) {
+      this.selectedItems = value;
     },
   },
   methods: {
-    select_all() {
-      if (this.selected_all) {
-        this.selected_items = this.items.map((a) => a.id);
+    selectAll() {
+      if (this.selectedAll) {
+        this.selectedItems = this.items.map((a) => a.id);
       } else {
-        this.selected_items = [];
+        this.selectedItems = [];
       }
     },
-    select_change() {
-      if (this.selected_all) {
-        this.selected_all = false;
+    selectChange() {
+      if (this.selectedAll) {
+        this.selectedAll = false;
       }
     },
-    size_convert(size) {
+    sizeConvert(size) {
       if (size >= 1024) {
         return Math.round((size / 1024) * 10) / 10 + "MB";
       } else {
         return size + "KB";
       }
     },
-    drag_enter() {
-      this.drag_stat = true;
+    dragEnter() {
+      this.dragStat = true;
     },
-    drag_leave() {
-      this.drag_stat = false;
+    dragLeave() {
+      this.dragStat = false;
     },
-    item_dropped(e) {
-      this.mixin_upload(e.dataTransfer.files);
-      this.drag_stat = false;
+    itemDropped(e) {
+      this.mixinUpload(e.dataTransfer.files);
+      this.dragStat = false;
     },
   },
 };

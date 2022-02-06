@@ -4,13 +4,13 @@
       <input
         type="text"
         placeholder="フォルダ名を入力"
-        v-model="new_folder_name"
+        v-model="newFolderName"
         @keydown.enter="create_folder"
       />
     </div>
     <div class="modal-ctl">
       <button @click="create_folder">作成</button>
-      <button @click="close_modal">キャンセル</button>
+      <button @click="closeModal">キャンセル</button>
     </div>
   </div>
 </template>
@@ -23,38 +23,38 @@ export default {
   props: ["prop"],
   data() {
     return {
-      new_folder_name: "",
-      current_path: "",
-      create_api_url: "http://127.0.0.1:8000/api/create",
+      newFolderName: "",
+      currentPath: "",
+      createAPI: "http://127.0.0.1:8000/api/create",
     };
   },
   mixins: [Mixin],
   mounted() {
-    this.current_path = this.get_path();
+    this.currentPath = this.getPath();
   },
   methods: {
-    close_modal() {
-      this.$emit("close_modal");
-      this.new_folder_name = "";
+    closeModal() {
+      this.$emit("closeModal");
+      this.newFolderName = "";
     },
     async create_folder() {
       await axios
-        .post(this.create_api_url, {
-          new_folder_name: this.new_folder_name,
-          path: this.current_path,
+        .post(this.createAPI, {
+          new_folder_name: this.newFolderName,
+          path: this.currentPath,
         })
         .then((response) => {
-          this.add_notification(response.status, "create");
+          this.addNotification(response.status, "create");
         })
         .catch((error) => {
-          this.add_notification(
+          this.addNotification(
             error.response.status,
             "create",
             error.response.data.detail
           );
         });
-      this.get_itemlist(this.current_path);
-      this.close_modal();
+      this.getItemList(this.currentPath);
+      this.closeModal();
     },
   },
 };

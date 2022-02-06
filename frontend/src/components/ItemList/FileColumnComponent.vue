@@ -39,7 +39,9 @@ export default {
   components: {
     LockButton,
   },
-  props: ["item"],
+  props: {
+    item: Object,
+  },
 };
 </script>
 

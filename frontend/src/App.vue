@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div v-if="!viewer_param">
+    <div v-if="!viewerParam">
       <path-view />
       <div class="contents">
         <toolbar />
@@ -10,7 +10,7 @@
       <notification-detail-modal />
     </div>
     <div v-else id="viewer">
-      <viewer :param="viewer_param" />
+      <viewer :param="viewerParam" />
     </div>
   </div>
 </template>
@@ -38,12 +38,12 @@ export default {
   },
   data() {
     return {
-      viewer_param: "",
+      viewerParam: "",
     };
   },
 
   mounted() {
-    this.viewer_param = window.location.search.substring(1);
+    this.viewerParam = window.location.search.substring(1);
   },
 };
 </script>

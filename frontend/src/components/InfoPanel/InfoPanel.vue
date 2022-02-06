@@ -2,7 +2,7 @@
   <div class="info-panel">
     <div v-if="thum" class="info-panel-thum">
       <svg
-        v-if="this_file.isfolder"
+        v-if="thisFile.isfolder"
         width="100%"
         height="100%"
         viewBox="0 0 26 22"
@@ -12,15 +12,15 @@
         <path d="M0 0H10L15 3H26V22H0V0Z" fill="#3C3C3C" />
       </svg>
       <img
-        v-else-if="this_file.isfolder === 0"
-        :src="'http://127.0.0.1:8000/api/preview/' + this_file.id"
+        v-else-if="thisFile.isfolder === 0"
+        :src="'http://127.0.0.1:8000/api/preview/' + thisFile.id"
       />
     </div>
     <div :class="[thum ? 'info-panel-main-thum' : 'info-panel-main-nothum']">
-      <p>ファイル名: {{ this_file.name }}</p>
-      <p>サイズ: {{ size_convert(this_file.size) }}</p>
-      <p>更新日時: {{ this_file.updated_at }}</p>
-      <a :href="'http://127.0.0.1:8000/api/preview/' + this_file.id" download=""
+      <p>ファイル名: {{ thisFile.name }}</p>
+      <p>サイズ: {{ sizeConvert(thisFile.size) }}</p>
+      <p>更新日時: {{ thisFile.updated_at }}</p>
+      <a :href="'http://127.0.0.1:8000/api/preview/' + thisFile.id" download=""
         >ダウンロード</a
       >
     </div>
@@ -31,28 +31,31 @@ import axios from "axios";
 import Mixin from "../../mixin/mixin";
 
 export default {
-  props: ["this_file_id", "thum"],
+  props: {
+    thisFileId: Number,
+    thum: Boolean,
+  },
   data() {
     return {
-      content_detail_api_url: "http://127.0.0.1:8000/api/detail",
-      this_file: "",
+      contentDetailAPI: "http://127.0.0.1:8000/api/detail",
+      thisFile: "",
     };
   },
   mixins: [Mixin],
   mounted() {
-    this.get_detail();
+    this.getDetail();
   },
   methods: {
-    async get_detail() {
+    async getDetail() {
       const gt = await axios
-        .get(this.content_detail_api_url + "/" + this.this_file_id)
+        .get(this.contentDetailAPI + "/" + this.thisFileId)
         .then((response) => {
           return response.data.detail;
         });
 
-      this.this_file = this.convart_dt([gt])[0];
+      this.thisFile = this.convertDt([gt])[0];
     },
-    size_convert(size) {
+    sizeConvert(size) {
       if (size >= 1024) {
         return Math.round((size / 1024) * 10) / 10 + "MB";
       } else {

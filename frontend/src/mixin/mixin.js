@@ -3,55 +3,54 @@ import axios from "axios";
 export default {
   data() {
     return {
-      show_api_url: "http://127.0.0.1:8000/api/show",
+      showAPI: "http://127.0.0.1:8000/api/show",
+      uploadAPI: "http://127.0.0.1:8000/api/upload",
       files: [],
-      upload_api_url: "http://127.0.0.1:8000/api/upload",
-      chunk_size: 104857600,
-      axios_headers: {
+      chunkSize: 104857600,
+      axiosHeaders: {
         "Access-Control-Allow-Origin": "*",
       },
     }
   },
   methods: {
-    get_path() {
+    getPath() {
       return decodeURI(window.location.pathname);
     },
     
-    get_itemlist(folder) {
+    getItemList(folder) {
       folder = folder.replace(/\/*$/, "");
-      axios.get(this.show_api_url + folder)
+      axios.get(this.showAPI + folder)
         .then((response) => { 
           if(response.data.itemlist)
           {
-            this.set_itemlist(this.convart_dt(response.data.itemlist));
+            this.setItemList(this.convertDt(response.data.itemlist));
           }
           else
           {
-            this.set_itemlist(response.data.itemlist);
+            this.setItemList(response.data.itemlist);
           }
         })
         .catch((error) => {
-          console.log(error);
-          this.set_itemlist([{
+          this.setItemList([{
             id: 0,
             name: error.response.data.msg,
             iserror: true
           }]);
-          this.$store.commit("toolbar_status_mutation", {
+          this.$store.commit("toolbarStatusMutation", {
             stat: false,
           });
         });
 
-        this.$store.commit("selected_items_mutation", {
+        this.$store.commit("selectedItemsMutation", {
           items: [],
         })
     },
-    set_itemlist(items) {
-      this.$store.commit("set_itemlist_mutation", {
+    setItemList(items) {
+      this.$store.commit("setItemListMutation", {
         items: items
       });
     },
-    convart_dt(dt){
+    convertDt(dt){
       return dt.map(i => {
         const t = new Date(Date.parse(i.updated_at));
         const updated_at = t.getFullYear() + "/" + (t.getMonth() + 1) + "/" + t.getDate() + " " + t.getHours() + ":" + t.getMinutes() +":" + t.getMinutes();
@@ -66,13 +65,13 @@ export default {
       });
     },
 
-    mixin_upload(files) {
-      this.add_upload_queue(files);
-      this.check_size(files);
+    mixinUpload(files) {
+      this.addUploadQueue(files);
+      this.checkSize(files);
     },
-    add_upload_queue(files) {
+    addUploadQueue(files) {
       for (let i = 0; i < files.length; i++) {
-        this.$store.commit("add_upload_queue_mutation", {
+        this.$store.commit("addUploadQueueMutation", {
           file: {
             id: i,
             name: files[i].name,
@@ -81,111 +80,111 @@ export default {
         });
       }
     },
-    check_size(files) {
+    checkSize(files) {
       for (let i = 0; i < files.length; i++) {
-        if (files[i].size >= this.chunk_size) {
-          this.file_slice(files[i], i);
+        if (files[i].size >= this.chunkSize) {
+          this.fileSlice(files[i], i);
         } else {
-          this.file_upload(files[i], i);
+          this.fileUpload(files[i], i);
         }
       }
     },
-    file_upload(file, index) {
+    fileUpload(file, index) {
       const formData = new FormData();
       formData.append("name", file.name);
-      formData.append("path", this.get_path());
+      formData.append("path", this.getPath());
       formData.append("data", file);
 
-      axios.post(this.upload_api_url, formData).then((response) => {
-        this.$store.commit("update_progress", {
+      axios.post(this.uploadAPI, formData).then((response) => {
+        this.$store.commit("updateProgressMutation", {
           item: {
             id: index,
             progress: 100,
           },
         });
         
-        this.add_notification(response.status, "upload");
+        this.addNotification(response.status, "upload");
       }).catch((error) => {
-        this.add_notification(error.response.status, "upload", error.response.data.detail);
+        this.addNotification(error.response.status, "upload", error.response.data.detail);
       });
     },
-    file_slice(file, index) {
-      const slice_count = Math.ceil(file.size / this.chunk_size);
-      const slice_file = [];
+    fileSlice(file, index) {
+      const sliceCount = Math.ceil(file.size / this.chunkSize);
+      const sliceFile = [];
 
-      for (let i = 0; i < slice_count; i++) {
-        if (i + 1 === slice_count) {
-          slice_file.push({
+      for (let i = 0; i < sliceCount; i++) {
+        if (i + 1 === sliceCount) {
+          sliceFile.push({
             name: file.name,
             path: file.path,
-            data: file.slice(i * this.chunk_size, file.size),
+            data: file.slice(i * this.chunkSize, file.size),
           });
         } else {
-          slice_file.push({
+          sliceFile.push({
             name: file.name,
             path: file.path,
-            data: file.slice(i * this.chunk_size, (i + 1) * this.chunk_size),
+            data: file.slice(i * this.chunkSize, (i + 1) * this.chunkSize),
           });
         }
       }
 
-      this.chunk_upload(slice_file, slice_count, index);
+      this.chunkUpload(sliceFile, sliceCount, index);
     },
-    async chunk_upload(file, sl_ct, index) {
-      const slice_tmpname = Math.random().toString(36).slice(-8);
-      let finish_chunk = 0;
+    async chunkUpload(file, sl_ct, index) {
+      const sliceTmpname = Math.random().toString(36).slice(-8);
+      let finishChunk = 0;
 
       await Promise.all(
         file.map(async (f, i) => {
           const formData = new FormData();
           formData.append("name", f.name);
-          formData.append("path", this.get_path());
-          formData.append("tmp_name", slice_tmpname);
+          formData.append("path", this.getPath());
+          formData.append("tmp_name", sliceTmpname);
           formData.append("index", i);
           formData.append("data", f.data);
 
-            await axios.post(this.upload_api_url, formData)
+            await axios.post(this.uploadAPI, formData)
             .then(() => {
-              finish_chunk += 1;
-              this.$store.commit("update_progress", {
+              finishChunk += 1;
+              this.$store.commit("updateProgressMutation", {
                 item: {
                   id: index,
-                  progress: Math.floor((finish_chunk / sl_ct) * 100) - 1,
+                  progress: Math.floor((finishChunk / sl_ct) * 100) - 1,
                 },
               })
             }).catch((error) => {
-              this.add_notification(error.response.status, "upload", error.response.data.detail);
+              this.addNotification(error.response.status, "upload", error.response.data.detail);
             });
         })
       );
-      this.send_endchunk_flag(file[0].name, slice_tmpname, index);
+      this.sendEndchunkFlag(file[0].name, sliceTmpname, index);
     },
-    async send_endchunk_flag(name, tmp_name, index) {
+    async sendEndchunkFlag(name, tmp_name, index) {
         await axios.post(
-          this.upload_api_url,
+          this.uploadAPI,
           {
             name: name,
             tmp_name: tmp_name,
-            path: this.get_path(),
+            path: this.getPath(),
             endflag: true,
           },
-          this.axios_headers
+          this.axiosHeaders
         )
         .then((response) => {
-        this.$store.commit("update_progress", {
+        this.$store.commit("updateProgressMutation", {
           item: {
             id: index,
             progress: 100,
           },
         });
-        this.add_notification(response.status, "upload");
+        this.addNotification(response.status, "upload");
         })
         .catch((error) => {
-          this.add_notification(error.response.status, "upload", error.response.data.detail);
+          this.addNotification(error.response.status, "upload", error.response.data.detail);
         });
     },
-    add_notification(status_code, type, detail=undefined) {
-      this.$store.commit("add_notification_mutation", {
+    addNotification(status_code, type, detail=undefined) {
+      this.$store.commit("addNotificationMutation", {
         notification: {
           status_code: status_code,
           type: type,

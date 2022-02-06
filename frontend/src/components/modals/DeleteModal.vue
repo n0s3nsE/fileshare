@@ -4,8 +4,8 @@
       <p>削除しますか？</p>
     </div>
     <div class="modal-ctl">
-      <button @click="delete_items">削除</button>
-      <button @click="close_modal">キャンセル</button>
+      <button @click="deleteItems">削除</button>
+      <button @click="closeModal">キャンセル</button>
     </div>
   </div>
 </template>
@@ -17,43 +17,43 @@ import Mixin from "../../mixin/mixin";
 export default {
   data() {
     return {
-      selected_items: [],
-      current_path: "",
-      delete_api_url: "http://127.0.0.1:8000/api/delete",
+      selectedItems: [],
+      currentPath: "",
+      deleteAPI: "http://127.0.0.1:8000/api/delete",
     };
   },
   mixins: [Mixin],
   computed: {
-    selected_items_getters() {
-      return this.$store.getters.get_selected_items;
+    selectedItemsGetters() {
+      return this.$store.getters.getSelectedItems;
     },
   },
   mounted() {
-    this.current_path = this.get_path();
-    this.selected_items = this.selected_items_getters;
+    this.currentPath = this.getPath();
+    this.selectedItems = this.selectedItemsGetters;
   },
   methods: {
-    async delete_items() {
+    async deleteItems() {
       await axios
-        .post(this.delete_api_url, {
-          delete_items: this.selected_items,
+        .post(this.deleteAPI, {
+          deleteItems: this.selectedItems,
         })
         .then((response) => {
-          this.add_notification(response.status, "delete");
+          this.addNotification(response.status, "delete");
         })
         .catch((error) => {
           error.response.data.detail.map((d) => {
-            this.add_notification(error.response.status, "delete", d);
+            this.addNotification(error.response.status, "delete", d);
           });
         });
-      this.close_modal();
-      this.reload_itemlist();
+      this.closeModal();
+      this.reloadItemlist();
     },
-    reload_itemlist() {
-      this.get_itemlist(this.current_path);
+    reloadItemlist() {
+      this.getItemList(this.currentPath);
     },
-    close_modal() {
-      this.$emit("close_modal");
+    closeModal() {
+      this.$emit("closeModal");
     },
   },
 };

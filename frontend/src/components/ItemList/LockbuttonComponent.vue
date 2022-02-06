@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="send_locksignal">
+    <button @click="sendLocksignal">
       <svg
         v-if="islocked"
         width="18"
@@ -47,22 +47,29 @@ import axios from "axios";
 import Mixin from "../../mixin/mixin";
 
 export default {
-  props: ["item_id", "islocked"],
+  props: {
+    item_id: Number,
+    islocked: Number,
+  },
   data() {
     return {
-      lock_api_url: "http://127.0.0.1:8000/api/lock",
+      lockAPI: "http://127.0.0.1:8000/api/lock",
     };
   },
   mixins: [Mixin],
   methods: {
-    send_locksignal() {
+    sendLocksignal() {
       axios
-        .get(this.lock_api_url + "/" + this.item_id)
+        .get(this.lockAPI + "/" + this.item_id)
         .then(() => {
-          this.get_itemlist(this.get_path());
+          this.getItemList(this.getPath());
         })
         .catch((error) => {
-          console.log(error);
+          this.addNotification(
+            error.response.status,
+            "lock",
+            error.response.data.detail
+          );
         });
     },
   },
