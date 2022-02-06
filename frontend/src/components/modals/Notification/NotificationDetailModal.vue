@@ -8,7 +8,7 @@
       </ul>
     </div>
     <div class="modal-notification-ctl">
-      <button @click="close_modal">完了</button>
+      <button @click="closeModal">完了</button>
     </div>
   </div>
 </template>
@@ -22,33 +22,33 @@ export default {
     };
   },
   computed: {
-    ndms_getters() {
-      return this.$store.getters.get_notification_detail_modal_status;
+    ndmsGetters() {
+      return this.$store.getters.getNotificationDetailModalStatus;
     },
-    notification_getters() {
-      return this.$store.getters.get_notification;
+    notificationGetters() {
+      return this.$store.getters.getNotification;
     },
   },
   watch: {
-    ndms_getters() {
-      this.status = this.ndms_getters;
+    ndmsGetters() {
+      this.status = this.ndmsGetters;
       if (this.status) {
-        this.get_notifications();
+        this.getNotifications();
       }
     },
   },
   mounted() {
-    this.get_notifications();
+    this.getNotifications();
   },
   methods: {
-    get_notifications() {
-      this.notifications = this.notification_getters;
+    getNotifications() {
+      this.notifications = this.notificationGetters;
     },
-    close_modal() {
-      this.$store.commit("change_ndms_mutation", {
+    closeModal() {
+      this.$store.commit("changeNdmsMutation", {
         status: false,
       });
-      this.$store.commit("remove_notification_mutation");
+      this.$store.commit("removeNotificationMutation");
     },
   },
 };
