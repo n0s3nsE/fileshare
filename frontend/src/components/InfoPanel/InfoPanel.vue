@@ -32,7 +32,7 @@ import Mixin from "../../mixin/mixin";
 
 export default {
   props: {
-    thisFileId: Number,
+    thisFileId: Object,
     thum: Boolean,
   },
   data() {
