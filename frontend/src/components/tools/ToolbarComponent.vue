@@ -2,8 +2,8 @@
   <div class="toolbar">
     <upload-button />
     <create-button />
-    <delete-button v-if="selected_items.length > 0" />
-    <rename-button v-if="selected_items.length === 1" />
+    <delete-button v-if="selectedItems.length > 0" />
+    <rename-button v-if="selectedItems.length === 1" />
   </div>
 </template>
 <script>
@@ -21,20 +21,20 @@ export default {
   },
   data() {
     return {
-      selected_items: [],
+      selectedItems: [],
     };
   },
   computed: {
-    selected_items_getters() {
-      return this.$store.getters.get_selected_items;
+    selectedItemsGetters() {
+      return this.$store.getters.getSelectedItems;
     },
   },
   mounted() {
-    this.selected_items = this.selected_items_getters;
+    this.selectedItems = this.selectedItemsGetters;
   },
   watch: {
-    selected_items_getters(value) {
-      this.selected_items = value;
+    selectedItemsGetters(value) {
+      this.selectedItems = value;
     },
   },
 };

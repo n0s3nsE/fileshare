@@ -1,13 +1,13 @@
 <template>
   <div v-if="notifications.length" class="notification-modal">
-    <div class="notification-modal-main" @click="open_detail_modal">
+    <div class="notification-modal-main" @click="openDetailModal">
       <p v-if="errors.length > 0">
         {{ type[errors[0].type] }}失敗 [クリックで詳細]
       </p>
       <p v-else>{{ type[notifications[0].type] }}成功</p>
     </div>
     <div class="notification-modal-ctl">
-      <button @click="close_modal">
+      <button @click="closeModal">
         <svg
           width="13"
           height="13"
@@ -38,32 +38,33 @@ export default {
         delete: "削除",
         rename: "更新",
         create: "作成",
+        lock: "ロック",
       },
     };
   },
   computed: {
-    notification_getters() {
-      return this.$store.getters.get_notification;
+    notificationGetters() {
+      return this.$store.getters.getNotification;
     },
   },
   watch: {
-    notification_getters() {
-      this.notifications = this.notification_getters;
+    notificationGetters() {
+      this.notifications = this.notificationGetters;
       this.errors = this.notifications.filter(
         (i) => i.status_code === 404 || i.status_code === 500
       );
     },
   },
   created() {
-    this.notifications = this.notification_getters;
+    this.notifications = this.notificationGetters;
   },
   methods: {
-    close_modal() {
-      this.$store.commit("remove_notification_mutation");
+    closeModal() {
+      this.$store.commit("removeNotificationMutation");
     },
-    open_detail_modal() {
+    openDetailModal() {
       if (this.notifications.filter((i) => i.status_code !== 200).length > 0) {
-        this.$store.commit("change_ndms_mutation", {
+        this.$store.commit("changeNdmsMutation", {
           status: true,
         });
       }

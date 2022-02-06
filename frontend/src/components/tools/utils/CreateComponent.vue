@@ -1,9 +1,9 @@
 <template>
   <div class="toolbar-create">
     <div>
-      <button @click="open_modal()" :disabled="modal_status">作成</button>
+      <button @click="open_modal()" :disabled="modalStatus">作成</button>
     </div>
-    <create-modal v-if="modal_status" @close_modal="close_modal" />
+    <create-modal v-if="modalStatus" @close_modal="close_modal" />
   </div>
 </template>
 
@@ -15,15 +15,15 @@ export default {
   },
   data() {
     return {
-      modal_status: false,
+      modalStatus: false,
     };
   },
   methods: {
     open_modal() {
-      this.modal_status = true;
+      this.modalStatus = true;
     },
     close_modal() {
-      this.modal_status = false;
+      this.modalStatus = false;
     },
   },
 };

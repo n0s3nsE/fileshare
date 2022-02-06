@@ -1,7 +1,7 @@
 <template>
   <div class="toolbar-delete">
-    <button @click="open_modal" :disabled="modal_status">削除</button>
-    <delete-modal v-if="modal_status" @close_modal="close_modal" />
+    <button @click="openModal" :disabled="modalStatus">削除</button>
+    <delete-modal v-if="modalStatus" @closeModal="closeModal" />
   </div>
 </template>
 <script>
@@ -13,15 +13,15 @@ export default {
   },
   data() {
     return {
-      modal_status: false,
+      modalStatus: false,
     };
   },
   methods: {
-    open_modal() {
-      this.modal_status = true;
+    openModal() {
+      this.modalStatus = true;
     },
-    close_modal() {
-      this.modal_status = false;
+    closeModal() {
+      this.modalStatus = false;
     },
   },
 };

@@ -2,7 +2,7 @@
   <div class="preview">
     <header class="preview-header">
       <div class="back-button">
-        <button @click="return_page()">
+        <button @click="returnPage()">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="30"
@@ -18,23 +18,23 @@
         </button>
       </div>
       <div>
-        <p>{{ this_file.name }}</p>
+        <p>{{ thisFile.name }}</p>
       </div>
     </header>
     <div class="preview-container">
-      <div class="preview-main" v-if="!error_flag">
+      <div class="preview-main" v-if="!errorFlag">
         <img
-          v-if="file_type.img.indexOf(param_type) > -1"
-          :src="view_api_url + '/' + param_id"
+          v-if="fileType.img.indexOf(paramType) > -1"
+          :src="viewAPI + '/' + paramId"
         />
         <video
           controls
-          v-else-if="file_type.video.indexOf(param_type) > -1"
-          :src="view_api_url + '/' + param_id"
+          v-else-if="fileType.video.indexOf(paramType) > -1"
+          :src="viewAPI + '/' + paramId"
         />
         <div v-else>
           <p>プレビュー非対応なファイル形式</p>
-          <a :href="view_api_url + '/' + param_id">Download</a>
+          <a :href="viewAPI + '/' + paramId">Download</a>
         </div>
       </div>
       <div v-else class="preview-main">不正なパラメーター</div>
@@ -42,8 +42,8 @@
       <div class="preview-controller">
         <button
           class="preview-controller-before"
-          v-if="before_item"
-          @click="goto_before"
+          v-if="beforeItem"
+          @click="gotoBefore"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -60,8 +60,8 @@
         </button>
         <button
           class="preview-controller-next"
-          v-if="next_item"
-          @click="goto_next"
+          v-if="nextItem"
+          @click="gotoNext"
         >
           <svg
             width="30"
@@ -77,7 +77,7 @@
           </svg>
         </button>
       </div>
-      <preview-info-panel class="preview-info-panel" :this_file_id="param_id" />
+      <preview-info-panel class="preview-info-panel" :thisFileId="paramId" />
     </div>
   </div>
 </template>
@@ -87,19 +87,21 @@ import Mixin from "../../mixin/mixin";
 import PreviewInfoPanel from "../InfoPanel/InfoPanel.vue";
 
 export default {
-  props: ["param"],
+  props: {
+    param: String,
+  },
   data() {
     return {
-      param_id: null,
-      view_api_url: "http://127.0.0.1:8000/api/preview",
-      file_type: {
+      paramId: null,
+      viewAPI: "http://127.0.0.1:8000/api/preview",
+      fileType: {
         video: ["mp4", "avi", "wav", "mov", "wmv"],
         img: ["jpg", "jpeg", "png", "bmp", "gif", "svg"],
       },
-      this_file: "",
-      next_item: null,
-      before_item: null,
-      error_flag: false,
+      thisFile: "",
+      nextItem: null,
+      beforeItem: null,
+      errorFlag: false,
     };
   },
   components: {
@@ -107,50 +109,50 @@ export default {
   },
   mixins: [Mixin],
   computed: {
-    itemlist_getters() {
-      return this.$store.getters.get_itemlist;
+    itemListGetters() {
+      return this.$store.getters.getItemList;
     },
   },
   created() {
-    const split_param = this.split_param(this.param);
-    this.param_id = split_param.id;
-    this.param_type = split_param.type.toLowerCase();
+    const splitParam = this.splitParam(this.param);
+    this.paramId = splitParam.id;
+    this.paramType = splitParam.type.toLowerCase();
 
     if (
-      typeof this.param_id !== "undefined" &&
-      typeof this.param_type !== "undefined"
+      typeof this.paramId !== "undefined" &&
+      typeof this.paramType !== "undefined"
     ) {
-      this.get_itemlist(this.get_path());
+      this.getItemList(this.getPath());
     } else {
-      this.error_flag = true;
+      this.errorFlag = true;
     }
   },
   watch: {
-    itemlist_getters() {
-      this.create_itemlist(this.itemlist_getters);
+    itemListGetters() {
+      this.createItemList(this.itemListGetters);
     },
   },
   methods: {
-    split_param(param) {
+    splitParam(param) {
       const sp_param = param.split("&").map((i) => i.split("="));
       return Object.fromEntries(sp_param);
     },
-    create_itemlist(itemlist) {
-      const items = itemlist.filter((i) => !i.isfolder);
-      const items_length = items.length;
+    createItemList(itemList) {
+      const items = itemList.filter((i) => !i.isfolder);
+      const itemsLength = items.length;
 
-      const filter_id = (item, index) => {
-        if (item.id === parseInt(this.param_id)) {
-          this.this_file = item;
+      const filterId = (item, index) => {
+        if (item.id === parseInt(this.paramId)) {
+          this.thisFile = item;
 
           if (index - 1 >= 0) {
-            this.before_item = {
+            this.beforeItem = {
               id: items[index - 1].id,
               type: items[index - 1].name.split(".").pop(),
             };
           }
-          if (index + 1 < items_length) {
-            this.next_item = {
+          if (index + 1 < itemsLength) {
+            this.nextItem = {
               id: items[index + 1].id,
               type: items[index + 1].name.split(".").pop(),
             };
@@ -160,16 +162,16 @@ export default {
         }
       };
 
-      items.filter(filter_id);
+      items.filter(filterId);
     },
-    return_page() {
-      window.location.href = this.get_path();
+    returnPage() {
+      window.location.href = this.getPath();
     },
-    goto_before() {
-      window.location.href = `?id=${this.before_item.id}&type=${this.before_item.type}`;
+    gotoBefore() {
+      window.location.href = `?id=${this.beforeItem.id}&type=${this.beforeItem.type}`;
     },
-    goto_next() {
-      window.location.href = `?id=${this.next_item.id}&type=${this.next_item.type}`;
+    gotoNext() {
+      window.location.href = `?id=${this.nextItem.id}&type=${this.nextItem.type}`;
     },
   },
 };

@@ -4,57 +4,57 @@ import Vuex from "vuex";
 Vue.use(Vuex);
 export default new Vuex.Store({
     state: {
-        itemlist: [],
-        upload_queue: [],
-        selected_items: [],
-        toolbar_status: true,
+        itemList: [],
+        uploadQueue: [],
+        selectedItems: [],
+        toolbarStatus: true,
         notification: [],
-        notification_detail_modal_status: false,
+        notificationDetailModalStatus: false,
     },
     getters: {
-        get_itemlist: state => {
-            return state.itemlist;
+        getItemList: state => {
+            return state.itemList;
         },
-        get_upload_queue: state => {
-            return state.upload_queue;
+        getUploadQueue: state => {
+            return state.uploadQueue;
         },
-        get_selected_items: state => {
-            return state.selected_items;
+        getSelectedItems: state => {
+            return state.selectedItems;
         },
-        get_toolbar_status: state => {
-            return state.toolbar_status;
+        getToolbarStatus: state => {
+            return state.toolbarStatus;
         },
-        get_notification: state => {
+        getNotification: state => {
             return state.notification;
         },
-        get_notification_detail_modal_status: state => {
-            return state.notification_detail_modal_status;
+        getNotificationDetailModalStatus: state => {
+            return state.notificationDetailModalStatus;
         }
     },
     mutations: {
-        set_itemlist_mutation(state, payload) {
-            state.itemlist = payload.items;
+        setItemListMutation(state, payload) {
+            state.itemList = payload.items;
         },
-        add_upload_queue_mutation(state, payload) {
-            state.upload_queue.push(payload.file);
+        addUploadQueueMutation(state, payload) {
+            state.uploadQueue.push(payload.file);
         },
-        remove_upload_queue_mutation(state, payload) {
-            state.upload_queue.splice(state.upload_queue.findIndex((e) => e.id == payload.id), 1);
+        removeUploadQueueMutation(state, payload) {
+            state.uploadQueue.splice(state.uploadQueue.findIndex((e) => e.id == payload.id), 1);
         },
-        selected_items_mutation(state, payload) {
-            state.selected_items = payload.items;
+        selectedItemsMutation(state, payload) {
+            state.selectedItems = payload.items;
         },
-        update_progress(state, payload){
-            for(let i = 0; i < state.upload_queue.length; i++){
-                if(state.upload_queue[i].id === payload.item.id){
-                    state.upload_queue[i].progress = payload.item.progress;
+        updateProgressMutation(state, payload){
+            for(let i = 0; i < state.uploadQueue.length; i++){
+                if(state.uploadQueue[i].id === payload.item.id){
+                    state.uploadQueue[i].progress = payload.item.progress;
                 } 
             }
         },
-        toolbar_status_mutation(state, payload){
-            state.toolbar_status = payload.stat;
+        toolbarStatusMutation(state, payload){
+            state.toolbarStatus = payload.stat;
         },
-        add_notification_mutation(state, payload) {
+        addNotificationMutation(state, payload) {
             if(state.notification.length > 0){
                 if(state.notification[0].type !== payload.notification.type){
                     state.notification = [];
@@ -66,11 +66,11 @@ export default new Vuex.Store({
                 detail: payload.notification.detail,
             });
         },
-        remove_notification_mutation(state) {
+        removeNotificationMutation(state) {
             state.notification = [];
         },
-        change_ndms_mutation(state, payload) {
-            state.notification_detail_modal_status = payload.status;
+        changeNdmsMutation(state, payload) {
+            state.notificationDetailModalStatus = payload.status;
         }
     },
 });

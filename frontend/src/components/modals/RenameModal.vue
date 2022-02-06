@@ -4,13 +4,13 @@
       <input
         type="text"
         placeholder="新たなファイル名"
-        @keydown.enter="rename_item"
-        ref="new_name"
+        @keydown.enter="renameItem"
+        ref="newName"
       />
     </div>
     <div class="modal-ctl">
-      <button @click="rename_item">保存</button>
-      <button @click="close_modal">キャンセル</button>
+      <button @click="renameItem">保存</button>
+      <button @click="closeModal">キャンセル</button>
     </div>
   </div>
 </template>
@@ -21,42 +21,42 @@ import Mixin from "../../mixin/mixin";
 export default {
   data() {
     return {
-      selected_item: null,
-      rename_api_url: "http://127.0.0.1:8000/api/rename",
+      selectedItem: null,
+      renameAPI: "http://127.0.0.1:8000/api/rename",
     };
   },
   mixins: [Mixin],
   computed: {
-    selected_item_getters() {
-      return this.$store.getters.get_selected_items[0];
+    selectedItemGetters() {
+      return this.$store.getters.getSelectedItems[0];
     },
   },
   methods: {
-    async rename_item() {
-      this.selected_item = this.selected_item_getters;
+    async renameItem() {
+      this.selectedItem = this.selectedItemGetters;
       await axios
-        .post(this.rename_api_url, {
-          id: this.selected_item,
-          new_name: this.$refs.new_name.value,
+        .post(this.renameAPI, {
+          id: this.selectedItem,
+          new_name: this.$refs.newName.value,
         })
         .then((response) => {
-          this.add_notification(response.status, "rename");
+          this.addNotification(response.status, "rename");
         })
         .catch((error) => {
-          this.add_notification(
+          this.addNotification(
             error.response.status,
             "rename",
             error.response.data.detail
           );
         });
-      this.close_modal();
-      this.reload_itemlist();
+      this.closeModal();
+      this.reloadItemlist();
     },
-    reload_itemlist() {
-      this.get_itemlist(this.get_path());
+    reloadItemlist() {
+      this.getItemList(this.getPath());
     },
-    close_modal() {
-      this.$emit("close_modal");
+    closeModal() {
+      this.$emit("closeModal");
     },
   },
 };

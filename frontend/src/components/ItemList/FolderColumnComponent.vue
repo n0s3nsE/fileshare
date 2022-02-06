@@ -12,7 +12,7 @@
       </svg>
     </div>
     <div class="list-view-name-link">
-      <a :href="folder_url">
+      <a :href="folderURL">
         {{ item.name }}
       </a>
     </div>
@@ -32,19 +32,21 @@ export default {
   components: {
     LockButton,
   },
-  props: ["item"],
+  props: {
+    item: Object,
+  },
   data() {
     return {
-      folder_url: "",
+      folderURL: "",
     };
   },
   mixins: [Mixin],
   mounted() {
-    const url = this.get_path();
+    const url = this.getPath();
     if (url !== "/") {
-      this.folder_url = url + "/" + this.item.name;
+      this.folderURL = url + "/" + this.item.name;
     } else {
-      this.folder_url = url + this.item.name;
+      this.folderURL = url + this.item.name;
     }
   },
 };
