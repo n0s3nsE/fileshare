@@ -172,7 +172,9 @@ export default {
   methods: {
     selectAll() {
       if (this.selectedAll) {
-        this.selectedItems = this.items.map((a) => a.id);
+        this.selectedItems = this.items
+          .filter((item) => !item.islocked)
+          .map((item) => item.id);
       } else {
         this.selectedItems = [];
       }

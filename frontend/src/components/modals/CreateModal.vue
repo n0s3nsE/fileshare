@@ -5,11 +5,11 @@
         type="text"
         placeholder="フォルダ名を入力"
         v-model="newFolderName"
-        @keydown.enter="create_folder"
+        @keydown.enter="createFolder"
       />
     </div>
     <div class="modal-ctl">
-      <button @click="create_folder">作成</button>
+      <button @click="createFolder">作成</button>
       <button @click="closeModal">キャンセル</button>
     </div>
   </div>
@@ -20,7 +20,6 @@ import axios from "axios";
 import Mixin from "../../mixin/mixin";
 
 export default {
-  props: ["prop"],
   data() {
     return {
       newFolderName: "",
@@ -37,7 +36,7 @@ export default {
       this.$emit("closeModal");
       this.newFolderName = "";
     },
-    async create_folder() {
+    async createFolder() {
       await axios
         .post(this.createAPI, {
           new_folder_name: this.newFolderName,

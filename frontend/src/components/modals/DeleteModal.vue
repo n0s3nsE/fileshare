@@ -36,7 +36,7 @@ export default {
     async deleteItems() {
       await axios
         .post(this.deleteAPI, {
-          deleteItems: this.selectedItems,
+          delete_items: this.selectedItems,
         })
         .then((response) => {
           this.addNotification(response.status, "delete");
