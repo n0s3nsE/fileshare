@@ -10,6 +10,11 @@ export default {
       axiosHeaders: {
         "Access-Control-Allow-Origin": "*",
       },
+      axiosConfig: {
+        timeout: 10000,
+        headers: {
+        }
+      },
     }
   },
   methods: {
@@ -19,12 +24,14 @@ export default {
     
     getItemList(folder) {
       folder = folder.replace(/\/*$/, "");
-      axios.get(this.showAPI + folder)
+      axios.get(this.showAPI + folder, this.axiosConfig)
         .then((response) => { 
             this.setItemList(response.data.itemlist);
         })
         .catch((error) => {
-          this.setItemList([{
+          if(error.code === "ECONNABORTED") this.addNotification(408, "show", 'timeout.');
+          else {
+            this.setItemList([{
             id: 0,
             name: error.response.data.msg,
             iserror: true
@@ -32,6 +39,7 @@ export default {
           this.$store.commit("toolbarStatusMutation", {
             stat: false,
           });
+          }
         });
 
         this.$store.commit("selectedItemsMutation", {
@@ -140,7 +148,7 @@ export default {
       formData.append("path", this.getPath());
       formData.append("data", file);
 
-      axios.post(this.uploadAPI, formData).then((response) => {
+      axios.post(this.uploadAPI, formData,).then((response) => {
         this.$store.commit("updateProgressMutation", {
           item: {
             id: index,
@@ -213,7 +221,7 @@ export default {
             path: this.getPath(),
             endflag: true,
           },
-          this.axiosHeaders
+          this.axiosConfig
         )
         .then((response) => {
         this.$store.commit("updateProgressMutation", {
@@ -225,6 +233,7 @@ export default {
         this.addNotification(response.status, "upload");
         })
         .catch((error) => {
+          if(error.code === "ECONNABORTED") this.addNotification(408, "upload", `'${name}' timeout.`);
           this.addNotification(error.response.status, "upload", error.response.data.detail);
         });
     },
