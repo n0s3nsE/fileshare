@@ -140,7 +140,7 @@ export default {
       this.items = this.itemListGetters;
       if (this.items === undefined) {
         this.emptyFolder = true;
-      } else if (this.items[0].iserror) {
+      } else if (this.items[0].name === "Folder does not exist.") {
         this.notExistsFolder = true;
       } else {
         this.emptyFolder = false;
@@ -182,6 +182,8 @@ export default {
       }
     },
     sortItemList(sortedBy) {
+      if (typeof this.items === "undefined") return;
+
       switch (sortedBy) {
         case "name":
           this.items = this.isAsc
