@@ -19,7 +19,7 @@ export default {
     return {
       selectedItems: [],
       currentPath: "",
-      deleteAPI: "http://127.0.0.1:8000/api/delete",
+      deleteAPI: process.env.VUE_APP_API_BASE_URL_DEV + "/delete",
     };
   },
   mixins: [Mixin],

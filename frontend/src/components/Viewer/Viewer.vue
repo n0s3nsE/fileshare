@@ -25,16 +25,16 @@
       <div class="preview-main" v-if="!errorFlag">
         <img
           v-if="fileType.img.indexOf(paramType) > -1"
-          :src="viewAPI + '/' + paramId"
+          :src="previewAPI + '/' + paramId"
         />
         <video
           controls
           v-else-if="fileType.video.indexOf(paramType) > -1"
-          :src="viewAPI + '/' + paramId"
+          :src="previewAPI + '/' + paramId"
         />
         <div v-else>
           <p>プレビュー非対応なファイル形式</p>
-          <a :href="viewAPI + '/' + paramId">Download</a>
+          <a :href="previewAPI + '/' + paramId">Download</a>
         </div>
       </div>
       <div v-else class="preview-main">不正なパラメーター</div>
@@ -93,7 +93,7 @@ export default {
   data() {
     return {
       paramId: null,
-      viewAPI: "http://127.0.0.1:8000/api/preview",
+      previewAPI: process.env.VUE_APP_API_BASE_URL_DEV + "/preview",
       fileType: {
         video: ["mp4", "avi", "wav", "mov", "wmv"],
         img: ["jpg", "jpeg", "png", "bmp", "gif", "svg"],
