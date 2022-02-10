@@ -21,14 +21,7 @@ export default {
       folder = folder.replace(/\/*$/, "");
       axios.get(this.showAPI + folder)
         .then((response) => { 
-          if(response.data.itemlist)
-          {
-            this.setItemList(this.convertDt(response.data.itemlist));
-          }
-          else
-          {
             this.setItemList(response.data.itemlist);
-          }
         })
         .catch((error) => {
           this.setItemList([{
@@ -46,6 +39,12 @@ export default {
         })
     },
     setItemList(items) {
+      if(items)
+      {
+        items = this.convertDt(items);
+        items = this.mixinSortItemList(items, "name", true);
+      }
+
       this.$store.commit("setItemListMutation", {
         items: items
       });
@@ -63,6 +62,52 @@ export default {
           updated_at: updated_at
         }
       });
+    },
+    mixinSortItemList(items, sortBy, isAsc) {
+      if(!sortBy) return items;
+
+      switch(sortBy){
+        case "name":
+          items.sort((a, b) => {
+            const nameA = a.name.toUpperCase();
+            const nameB = b.name.toUpperCase();
+            if(isAsc){
+              return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+            }
+            else{
+              return nameA > nameB ? -1 : nameA < nameB ? 1 : 0;
+            }
+          });
+          break;
+        case "update":
+          items.sort((a, b) => {
+            const updatedA = a.updated_at;
+            const updatedB = b.updated_at;
+            if(isAsc){
+              return updatedA < updatedB ? -1 : updatedA > updatedB ? 1 : 0;
+            }
+            else{
+              return updatedA > updatedB ? -1 : updatedA < updatedB ? 1 : 0;
+            }
+          });
+          break;
+        case "size":
+          items.sort((a, b) => {
+            const sizeA = a.size;
+            const sizeB = b.size;
+            if(isAsc){
+              return sizeA < sizeB ? -1 : sizeA > sizeB ? 1 : 0;
+            }
+            else{
+              return sizeA > sizeB ? -1 : sizeA < sizeB ? 1 : 0;  
+            }
+          });
+          break;
+        default:
+          return;
+      }
+      
+      return items;
     },
 
     mixinUpload(files) {
