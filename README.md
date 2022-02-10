@@ -36,8 +36,18 @@ cd FileShare
 
 ### フロントエンド
 
+.env を編集する
+
 ```
 cd frontend
+cp .env.example .env
+//.env
+VUE_APP_API_BASE_URL='http://{host}/api'
+```
+
+起動
+
+```
 yarn
 yarn run serve
 ```
