@@ -39,16 +39,16 @@
                   />
                 </div>
               </td>
-              <td v-if="item.isfolder">
+              <td v-if="item.isfolder" @click="clickTableCell(item.id)">
                 <folder-column :item="item" />
               </td>
-              <td v-else>
+              <td v-else @click="clickTableCell(item.id)">
                 <file-column :item="item" />
               </td>
-              <td class="list-view-updatedat">
+              <td class="list-view-updatedat" @click="clickTableCell(item.id)">
                 {{ item.updated_at }}
               </td>
-              <td class="list-view-size">
+              <td class="list-view-size" @click="clickTableCell(item.id)">
                 {{ sizeConvert(item.size) }}
               </td>
             </tr>
@@ -171,6 +171,16 @@ export default {
     },
   },
   methods: {
+    clickTableCell(id) {
+      this.selectChange();
+      if (this.selectedItems[0] === id) this.selectedItems = [];
+      else {
+        this.selectedItems = [];
+        this.$nextTick(() => {
+          this.selectedItems.push(id);
+        });
+      }
+    },
     sortItemList(sortedBy) {
       switch (sortedBy) {
         case "name":
@@ -244,9 +254,13 @@ table {
 }
 
 thead th {
-  background: rgb(245, 245, 245);
+  background: #f5f5f5;
   position: sticky;
   top: 0px;
+}
+
+thead th:hover {
+  background: #e1e1e1;
 }
 
 tr {
