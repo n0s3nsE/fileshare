@@ -14,9 +14,9 @@
                   v-model="selectedAll"
                 />
               </th>
-              <th>ファイル名</th>
-              <th>更新</th>
-              <th>サイズ</th>
+              <th @click="sortItemList('name')">ファイル名</th>
+              <th @click="sortItemList('update')">更新</th>
+              <th @click="sortItemList('size')">サイズ</th>
             </tr>
           </thead>
           <tbody>
@@ -113,6 +113,7 @@ export default {
       emptyFolder: false,
       notExistsFolder: false,
       dragStat: false,
+      isAsc: true,
     };
   },
   mixins: [Mixin],
@@ -170,6 +171,30 @@ export default {
     },
   },
   methods: {
+    sortItemList(sortedBy) {
+      switch (sortedBy) {
+        case "name":
+          this.items = this.isAsc
+            ? this.mixinSortItemList(this.items, "name", false)
+            : this.mixinSortItemList(this.items, "name", true);
+          this.isAsc = !this.isAsc;
+          break;
+        case "update":
+          this.items = this.isAsc
+            ? this.mixinSortItemList(this.items, "update", false)
+            : this.mixinSortItemList(this.items, "update", true);
+          this.isAsc = !this.isAsc;
+          break;
+        case "size":
+          this.items = this.isAsc
+            ? this.mixinSortItemList(this.items, "size", false)
+            : this.mixinSortItemList(this.items, "size", true);
+          this.isAsc = !this.isAsc;
+          break;
+        default:
+          return;
+      }
+    },
     selectAll() {
       if (this.selectedAll) {
         this.selectedItems = this.items
