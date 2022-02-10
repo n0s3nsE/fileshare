@@ -22,7 +22,7 @@ export default {
   data() {
     return {
       selectedItem: null,
-      renameAPI: "http://127.0.0.1:8000/api/rename",
+      renameAPI: process.env.VUE_APP_API_BASE_URL_DEV + "/rename",
     };
   },
   mixins: [Mixin],

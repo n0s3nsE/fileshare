@@ -3,8 +3,8 @@ import axios from "axios";
 export default {
   data() {
     return {
-      showAPI: "http://127.0.0.1:8000/api/show",
-      uploadAPI: "http://127.0.0.1:8000/api/upload",
+      showAPI: process.env.VUE_APP_API_BASE_URL_DEV + "/show",
+      uploadAPI: process.env.VUE_APP_API_BASE_URL_DEV + "/upload",
       files: [],
       chunkSize: 104857600,
       axiosHeaders: {

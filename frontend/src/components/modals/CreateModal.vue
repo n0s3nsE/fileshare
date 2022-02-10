@@ -24,7 +24,7 @@ export default {
     return {
       newFolderName: "",
       currentPath: "",
-      createAPI: "http://127.0.0.1:8000/api/create",
+      createAPI: process.env.VUE_APP_API_BASE_URL_DEV + "/create",
     };
   },
   mixins: [Mixin],

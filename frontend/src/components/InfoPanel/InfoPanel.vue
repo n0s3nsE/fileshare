@@ -13,14 +13,14 @@
       </svg>
       <img
         v-else-if="thisFile.isfolder === 0"
-        :src="'http://127.0.0.1:8000/api/preview/' + thisFile.id"
+        :src="contentPreviewAPI + '/' + thisFile.id"
       />
     </div>
     <div :class="[thum ? 'info-panel-main-thum' : 'info-panel-main-nothum']">
       <p>ファイル名: {{ thisFile.name }}</p>
       <p>サイズ: {{ sizeConvert(thisFile.size) }}</p>
       <p>更新日時: {{ thisFile.updated_at }}</p>
-      <a :href="'http://127.0.0.1:8000/api/preview/' + thisFile.id" download=""
+      <a :href="contentPreviewAPI + '/' + thisFile.id" download=""
         >ダウンロード</a
       >
     </div>
@@ -37,7 +37,8 @@ export default {
   },
   data() {
     return {
-      contentDetailAPI: "http://127.0.0.1:8000/api/detail",
+      contentDetailAPI: process.env.VUE_APP_API_BASE_URL_DEV + "/detail",
+      contentPreviewAPI: process.env.VUE_APP_API_BASE_URL_DEV + "/preview",
       thisFile: "",
     };
   },
