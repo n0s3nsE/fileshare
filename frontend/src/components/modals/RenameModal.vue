@@ -35,19 +35,27 @@ export default {
     async renameItem() {
       this.selectedItem = this.selectedItemGetters;
       await axios
-        .post(this.renameAPI, {
-          id: this.selectedItem,
-          new_name: this.$refs.newName.value,
-        })
+        .post(
+          this.renameAPI,
+          {
+            id: this.selectedItem,
+            new_name: this.$refs.newName.value,
+          },
+          this.axiosConfig
+        )
         .then((response) => {
           this.addNotification(response.status, "rename");
         })
         .catch((error) => {
-          this.addNotification(
-            error.response.status,
-            "rename",
-            error.response.data.detail
-          );
+          if (error.code === "ECONNABORTED")
+            this.addNotification(408, "rename", "timeout");
+          else {
+            this.addNotification(
+              error.response.status,
+              "rename",
+              error.response.data.detail
+            );
+          }
         });
       this.closeModal();
       this.reloadItemlist();

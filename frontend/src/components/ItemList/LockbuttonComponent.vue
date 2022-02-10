@@ -60,16 +60,20 @@ export default {
   methods: {
     sendLocksignal() {
       axios
-        .get(this.lockAPI + "/" + this.item_id)
+        .get(this.lockAPI + "/" + this.item_id, this.axiosConfig)
         .then(() => {
           this.getItemList(this.getPath());
         })
         .catch((error) => {
-          this.addNotification(
-            error.response.status,
-            "lock",
-            error.response.data.detail
-          );
+          if (error.code === "ECONNABORTED")
+            this.addNotification(408, "lock", "timeout.");
+          else {
+            this.addNotification(
+              error.response.status,
+              "lock",
+              error.response.data.detail
+            );
+          }
         });
     },
   },

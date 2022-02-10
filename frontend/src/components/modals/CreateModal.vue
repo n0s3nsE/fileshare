@@ -38,19 +38,27 @@ export default {
     },
     async createFolder() {
       await axios
-        .post(this.createAPI, {
-          new_folder_name: this.newFolderName,
-          path: this.currentPath,
-        })
+        .post(
+          this.createAPI,
+          {
+            new_folder_name: this.newFolderName,
+            path: this.currentPath,
+          },
+          this.axiosConfig
+        )
         .then((response) => {
           this.addNotification(response.status, "create");
         })
         .catch((error) => {
-          this.addNotification(
-            error.response.status,
-            "create",
-            error.response.data.detail
-          );
+          if (error.code === "ECONNABORTED")
+            this.addNotification(408, "create", "timeout.");
+          else {
+            this.addNotification(
+              error.response.status,
+              "create",
+              error.response.data.detail
+            );
+          }
         });
       this.getItemList(this.currentPath);
       this.closeModal();

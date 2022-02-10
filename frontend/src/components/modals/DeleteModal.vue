@@ -35,16 +35,24 @@ export default {
   methods: {
     async deleteItems() {
       await axios
-        .post(this.deleteAPI, {
-          delete_items: this.selectedItems,
-        })
+        .post(
+          this.deleteAPI,
+          {
+            delete_items: this.selectedItems,
+          },
+          this.axiosConfig
+        )
         .then((response) => {
           this.addNotification(response.status, "delete");
         })
         .catch((error) => {
-          error.response.data.detail.map((d) => {
-            this.addNotification(error.response.status, "delete", d);
-          });
+          if (error.code === "ECONNABORTED")
+            this.addNotification(408, "delete", "timeout");
+          else {
+            error.response.data.detail.map((d) => {
+              this.addNotification(error.response.status, "delete", d);
+            });
+          }
         });
       this.closeModal();
       this.reloadItemlist();

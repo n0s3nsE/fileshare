@@ -32,7 +32,7 @@ import Mixin from "../../mixin/mixin";
 
 export default {
   props: {
-    thisFileId: Object,
+    thisFileId: String,
     thum: Boolean,
   },
   data() {
@@ -49,9 +49,19 @@ export default {
   methods: {
     async getDetail() {
       const gt = await axios
-        .get(this.contentDetailAPI + "/" + this.thisFileId)
+        .get(this.contentDetailAPI + "/" + this.thisFileId, this.axiosConfig)
         .then((response) => {
           return response.data.detail;
+        })
+        .catch((error) => {
+          if (error.code === "ECONNABORTED")
+            this.addNotification(408, "getDetail", "timeout.");
+          else
+            this.addNotification(
+              error.status_code,
+              "getDetail",
+              error.response.data.detail
+            );
         });
 
       this.thisFile = this.convertDt([gt])[0];

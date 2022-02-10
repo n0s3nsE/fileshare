@@ -84,7 +84,7 @@
     <info-panel
       v-if="selectedItems.length === 1"
       class="item-info"
-      :thisFileId="selectedItems[0]"
+      :thisFileId="selectedItems[0].toString()"
       :thum="true"
     />
   </div>
