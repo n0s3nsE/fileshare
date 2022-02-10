@@ -1,8 +1,14 @@
 <template>
   <div>
-    <button @click="sendLocksignal">
+    <button @click="sendLockSignal">
+      <vue-loading
+        v-if="isLoading"
+        type="spin"
+        color="#333"
+        :size="{ width: '26px', height: '26px' }"
+      />
       <svg
-        v-if="islocked"
+        v-else-if="isLocked"
         width="18"
         height="26"
         viewBox="0 0 18 26"
@@ -45,24 +51,32 @@
 <script>
 import axios from "axios";
 import Mixin from "../../mixin/mixin";
+import { VueLoading } from "vue-loading-template";
 
 export default {
+  components: {
+    VueLoading,
+  },
   props: {
-    item_id: Number,
-    islocked: Number,
+    itemId: Number,
+    isLocked: Number,
   },
   data() {
     return {
       lockAPI: process.env.VUE_APP_API_BASE_URL_DEV + "/lock",
+      isLoading: false,
     };
   },
   mixins: [Mixin],
   methods: {
-    sendLocksignal() {
+    sendLockSignal() {
+      this.isLoading = true;
+      console.log(this.isLoading);
       axios
-        .get(this.lockAPI + "/" + this.item_id, this.axiosConfig)
+        .get(this.lockAPI + "/" + this.itemId, this.axiosConfig)
         .then(() => {
           this.getItemList(this.getPath());
+          this.isLoading = false;
         })
         .catch((error) => {
           if (error.code === "ECONNABORTED")
@@ -74,6 +88,7 @@ export default {
               error.response.data.detail
             );
           }
+          this.isLoading = false;
         });
     },
   },

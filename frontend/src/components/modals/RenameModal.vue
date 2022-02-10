@@ -9,7 +9,15 @@
       />
     </div>
     <div class="modal-ctl">
-      <button @click="renameItem">保存</button>
+      <button @click="renameItem">
+        <vue-loading
+          v-if="isLoading"
+          type="spin"
+          color="#333"
+          :size="{ width: '22px', height: '22px' }"
+        />
+        <span v-else>保存</span>
+      </button>
       <button @click="closeModal">キャンセル</button>
     </div>
   </div>
@@ -17,12 +25,17 @@
 <script>
 import axios from "axios";
 import Mixin from "../../mixin/mixin";
+import { VueLoading } from "vue-loading-template";
 
 export default {
+  components: {
+    VueLoading,
+  },
   data() {
     return {
       selectedItem: null,
       renameAPI: process.env.VUE_APP_API_BASE_URL_DEV + "/rename",
+      isLoading: false,
     };
   },
   mixins: [Mixin],
@@ -34,6 +47,7 @@ export default {
   methods: {
     async renameItem() {
       this.selectedItem = this.selectedItemGetters;
+      this.isLoading = true;
       await axios
         .post(
           this.renameAPI,
@@ -45,6 +59,7 @@ export default {
         )
         .then((response) => {
           this.addNotification(response.status, "rename");
+          this.isLoading = false;
         })
         .catch((error) => {
           if (error.code === "ECONNABORTED")
@@ -56,6 +71,7 @@ export default {
               error.response.data.detail
             );
           }
+          this.isLoading = false;
         });
       this.closeModal();
       this.reloadItemlist();

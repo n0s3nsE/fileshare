@@ -17,8 +17,8 @@
       </a>
     </div>
     <lock-button
-      :item_id="item.id"
-      :islocked="item.islocked"
+      :itemId="item.id"
+      :isLocked="item.islocked"
       class="list-view-name-lockbutton"
     />
   </div>
