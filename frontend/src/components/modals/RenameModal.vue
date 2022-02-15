@@ -34,7 +34,7 @@ export default {
   data() {
     return {
       selectedItem: null,
-      renameAPI: process.env.VUE_APP_API_BASE_URL_DEV + "/rename",
+      renameAPI: process.env.VUE_APP_API_BASE_URL + "/rename",
       isLoading: false,
     };
   },

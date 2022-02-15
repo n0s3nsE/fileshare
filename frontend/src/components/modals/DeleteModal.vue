@@ -31,7 +31,7 @@ export default {
     return {
       selectedItems: [],
       currentPath: "",
-      deleteAPI: process.env.VUE_APP_API_BASE_URL_DEV + "/delete",
+      deleteAPI: process.env.VUE_APP_API_BASE_URL + "/delete",
       isLoading: false,
     };
   },

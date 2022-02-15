@@ -36,7 +36,7 @@ export default {
     return {
       newFolderName: "",
       currentPath: "",
-      createAPI: process.env.VUE_APP_API_BASE_URL_DEV + "/create",
+      createAPI: process.env.VUE_APP_API_BASE_URL + "/create",
       isLoading: false,
     };
   },
