@@ -54,9 +54,21 @@ yarn run serve
 
 ### バックエンド
 
+.env を編集する
+
+```
+cp .env.example .env
+//.env
+DB_DATABASE=DB_NAME
+DB_USERNAME=USER_NAME
+DB_PASSWORD=PASSWORD
+FRONTEND_URL=FRONTEND_URL //追記
+```
+
 ```
 cd backend
 composer install
 php artisan migrate
+php artisan key:generate
 php artisan serve
 ```
