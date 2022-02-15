@@ -93,7 +93,7 @@ export default {
   data() {
     return {
       paramId: null,
-      previewAPI: process.env.VUE_APP_API_BASE_URL_DEV + "/preview",
+      previewAPI: process.env.VUE_APP_API_BASE_URL + "/preview",
       fileType: {
         video: ["mp4", "avi", "wav", "mov", "wmv"],
         img: ["jpg", "jpeg", "png", "bmp", "gif", "svg"],

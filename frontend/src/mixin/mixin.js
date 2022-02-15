@@ -3,13 +3,10 @@ import axios from "axios";
 export default {
   data() {
     return {
-      showAPI: process.env.VUE_APP_API_BASE_URL_DEV + "/show",
-      uploadAPI: process.env.VUE_APP_API_BASE_URL_DEV + "/upload",
+      showAPI: process.env.VUE_APP_API_BASE_URL + "/show",
+      uploadAPI: process.env.VUE_APP_API_BASE_URL + "/upload",
       files: [],
       chunkSize: 104857600,
-      axiosHeaders: {
-        "Access-Control-Allow-Origin": "*",
-      },
       axiosConfig: {
         timeout: 10000,
         headers: {

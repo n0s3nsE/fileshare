@@ -63,7 +63,7 @@ export default {
   },
   data() {
     return {
-      lockAPI: process.env.VUE_APP_API_BASE_URL_DEV + "/lock",
+      lockAPI: process.env.VUE_APP_API_BASE_URL + "/lock",
       isLoading: false,
     };
   },

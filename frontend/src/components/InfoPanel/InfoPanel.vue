@@ -37,8 +37,8 @@ export default {
   },
   data() {
     return {
-      contentDetailAPI: process.env.VUE_APP_API_BASE_URL_DEV + "/detail",
-      contentPreviewAPI: process.env.VUE_APP_API_BASE_URL_DEV + "/preview",
+      contentDetailAPI: process.env.VUE_APP_API_BASE_URL + "/detail",
+      contentPreviewAPI: process.env.VUE_APP_API_BASE_URL + "/preview",
       thisFile: "",
     };
   },
