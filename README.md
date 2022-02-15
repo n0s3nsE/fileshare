@@ -70,5 +70,6 @@ cd backend
 composer install
 php artisan migrate
 php artisan key:generate
+php artisan storage:link
 php artisan serve
 ```
