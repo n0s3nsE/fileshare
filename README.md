@@ -21,7 +21,7 @@ Vue.js や Laravel の学習を兼ねて作成した
 
 ### フロントエンド
 
-Vue.JS
+Vue.js
 
 ### バックエンド
 
