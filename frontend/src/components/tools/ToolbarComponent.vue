@@ -2,8 +2,8 @@
   <div class="toolbar">
     <upload-button />
     <create-button />
-    <delete-button v-if="selectedItems.length > 0" />
-    <rename-button v-if="selectedItems.length === 1" />
+    <delete-button v-if="selectedItems.length > 0 && !isLocked" />
+    <rename-button v-if="selectedItems.length === 1 && !isLocked" />
   </div>
 </template>
 <script>
@@ -11,6 +11,7 @@ import UploadButton from "./utils/UploadComponent.vue";
 import CreateButton from "./utils/CreateComponent.vue";
 import DeleteButton from "./utils/DeleteComponent.vue";
 import RenameButton from "./utils/RenameButtonComponent.vue";
+import Mixin from "../../mixin/mixin";
 
 export default {
   components: {
@@ -22,8 +23,10 @@ export default {
   data() {
     return {
       selectedItems: [],
+      isLocked: true,
     };
   },
+  mixins: [Mixin],
   computed: {
     selectedItemsGetters() {
       return this.$store.getters.getSelectedItems;
@@ -35,6 +38,14 @@ export default {
   watch: {
     selectedItemsGetters(value) {
       this.selectedItems = value;
+      this.checkIsLocked();
+    },
+  },
+  methods: {
+    async checkIsLocked() {
+      if (this.selectedItems.length === 0) return;
+      const gd = await this.getDetail(this.selectedItems[0]);
+      gd.islocked ? (this.isLocked = true) : (this.isLocked = false);
     },
   },
 };

@@ -71,7 +71,6 @@ export default {
   methods: {
     sendLockSignal() {
       this.isLoading = true;
-      console.log(this.isLoading);
       axios
         .get(this.lockAPI + "/" + this.itemId, this.axiosConfig)
         .then(() => {
