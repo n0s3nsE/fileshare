@@ -51,10 +51,7 @@ export default {
     notificationGetters() {
       this.notifications = this.notificationGetters;
       this.errors = this.notifications.filter(
-        (i) =>
-          i.status_code === 404 ||
-          i.status_code === 408 ||
-          i.status_code === 500
+        (i) => i.status_code !== 200 && i.status_code !== 204
       );
     },
   },

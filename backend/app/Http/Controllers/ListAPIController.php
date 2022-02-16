@@ -36,12 +36,13 @@ class ListAPIController extends Controller
 
     public function update(Request $request)
     {
+        $request->validate([
+            'id' => 'required',
+            'new_name' => 'required',
+        ]);
+
         $id = $request->id;
         $new_name = $request->new_name;
-
-        if ($id == null || $new_name == "") {
-            return response(json_encode(['msg' => 'failed', 'detail' => 'Required parameters are empty.']), 500);
-        }
 
         $ct = Content::find($id);
         if ($ct === null) {
@@ -93,6 +94,10 @@ class ListAPIController extends Controller
 
     public function destroy(Request $request)
     {
+        $request->validate([
+            'delete_items' => 'required',
+        ]);
+
         $delete_item_ids = $request->delete_items;
         $failed_items = [];
 
@@ -176,9 +181,10 @@ class ListAPIController extends Controller
 
     public function store(Request $request)
     {
-        if ($request->name == "" || $request->path == "") {
-            return response(['msg' => 'failed', 'detail' => 'Required parameters are empty.'], 500);
-        }
+        $request->validate([
+            'name' => 'required',
+            'path' => 'required'
+        ]);
 
         if ($this->check_folder_exists(substr($request->path, 1))) {
             if ($request->tmp_name) {
@@ -199,8 +205,14 @@ class ListAPIController extends Controller
         }
     }
 
-    public function upload($request)
+    public function upload(Request $request)
     {
+        $request->validate([
+            'name' => 'required',
+            'path' => 'required',
+            'data' => 'required',
+        ]);
+
         $name = $request->name;
         $path = $request->path;
         $data = $request->data;
@@ -283,12 +295,13 @@ class ListAPIController extends Controller
 
     public function create(Request $request)
     {
+        $request->validate([
+            'new_folder_name' => 'required',
+            'path' => 'required',
+        ]);
+
         $new_folder_name = $request->new_folder_name;
         $path = $request->path;
-
-        if ($new_folder_name == "" || $path == "") {
-            return response(['msg' => 'failed', 'detail' => 'Required parameters are empty.'], 500);
-        }
 
         $new_folder_name = $this->rename_same_foldername($new_folder_name, $path);
 
