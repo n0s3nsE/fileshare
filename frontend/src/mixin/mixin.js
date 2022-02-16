@@ -5,6 +5,7 @@ export default {
     return {
       showAPI: process.env.VUE_APP_API_BASE_URL + "/show",
       uploadAPI: process.env.VUE_APP_API_BASE_URL + "/upload",
+      contentDetailAPI: process.env.VUE_APP_API_BASE_URL + "/detail",
       files: [],
       chunkSize: 104857600,
       axiosConfig: {
@@ -53,6 +54,24 @@ export default {
       this.$store.commit("setItemListMutation", {
         items: items
       });
+    },
+    async getDetail(contentId) {
+      const gt = await axios
+      .get(this.contentDetailAPI + "/" + contentId, this.axiosConfig)
+      .then((response) => {
+        return response.data.detail;
+      })
+      .catch((error) => {
+        if (error.code === "ECONNABORTED")
+          this.addNotification(408, "getDetail", "timeout.");
+        else
+          this.addNotification(
+            error.status_code,
+            "getDetail",
+            error.response.data.detail
+          );
+      });
+      return this.convertDt([gt])[0];
     },
     convertDt(dt){
       return dt.map(i => {

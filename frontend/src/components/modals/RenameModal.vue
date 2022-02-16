@@ -3,13 +3,13 @@
     <div class="modal-main">
       <input
         type="text"
-        placeholder="新たなファイル名"
-        @keydown.enter="renameItem"
-        ref="newName"
+        :placeholder="placeholderMsg"
+        v-model="newName"
+        @change="validateText"
       />
     </div>
     <div class="modal-ctl">
-      <button @click="renameItem">
+      <button @click="renameItem" :disabled="isLoading || validateError">
         <vue-loading
           v-if="isLoading"
           type="spin"
@@ -35,7 +35,11 @@ export default {
     return {
       selectedItem: null,
       renameAPI: process.env.VUE_APP_API_BASE_URL + "/rename",
+      newName: "",
       isLoading: false,
+      placeholderMsg: "",
+      validateError: true,
+      isFolder: false,
     };
   },
   mixins: [Mixin],
@@ -44,7 +48,32 @@ export default {
       return this.$store.getters.getSelectedItems[0];
     },
   },
+  mounted() {
+    this.contentDetail();
+  },
   methods: {
+    validateText() {
+      if (this.isFolder) {
+        this.newName.length > 0 && this.newName.length <= 32
+          ? (this.validateError = false)
+          : (this.validateError = true);
+      } else {
+        this.newName.length > 0
+          ? (this.validateError = false)
+          : (this.validateError = true);
+      }
+    },
+    async contentDetail() {
+      const gd = await this.getDetail(this.selectedItemGetters);
+
+      if (gd.isfolder) {
+        this.placeholderMsg = "新しいフォルダ名(1~32文字)";
+        this.isFolder = true;
+      } else {
+        this.placeholderMsg = "新しいファイル名";
+        this.isFolder = false;
+      }
+    },
     async renameItem() {
       this.selectedItem = this.selectedItemGetters;
       this.isLoading = true;
@@ -53,7 +82,7 @@ export default {
           this.renameAPI,
           {
             id: this.selectedItem,
-            new_name: this.$refs.newName.value,
+            new_name: this.newName,
           },
           this.axiosConfig
         )

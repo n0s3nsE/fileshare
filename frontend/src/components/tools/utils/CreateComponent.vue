@@ -1,7 +1,7 @@
 <template>
   <div class="toolbar-create">
     <div>
-      <button @click="openModal()" :disabled="modalStatus">作成</button>
+      <button @click="openModal()" :disabled="modalStatus">フォルダ作成</button>
     </div>
     <create-modal v-if="modalStatus" @closeModal="closeModal" />
   </div>
