@@ -3,13 +3,13 @@
     <div class="modal-main">
       <input
         type="text"
-        placeholder="フォルダ名を入力"
+        placeholder="フォルダ名を入力(1~32文字)"
         v-model="newFolderName"
-        @keydown.enter="createFolder"
+        @change="validateText"
       />
     </div>
     <div class="modal-ctl">
-      <button @click="createFolder" :disabled="isLoading">
+      <button @click="createFolder" :disabled="isLoading || validateError">
         <vue-loading
           v-if="isLoading"
           type="spin"
@@ -38,6 +38,7 @@ export default {
       currentPath: "",
       createAPI: process.env.VUE_APP_API_BASE_URL + "/create",
       isLoading: false,
+      validateError: true,
     };
   },
   mixins: [Mixin],
@@ -49,7 +50,13 @@ export default {
       this.$emit("closeModal");
       this.newFolderName = "";
     },
+    validateText() {
+      this.newFolderName.length > 0 && this.newFolderName.length <= 32
+        ? (this.validateError = false)
+        : (this.validateError = true);
+    },
     async createFolder() {
+      this.validateError = false;
       this.isLoading = true;
       await axios
         .post(

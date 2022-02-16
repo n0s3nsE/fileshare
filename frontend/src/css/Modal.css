@@ -19,6 +19,9 @@
   justify-content: center;
   align-items: center;
 }
+.modal-main input {
+  width: 80%;
+}
 .modal-ctl {
   display: flex;
   align-items: center;
@@ -35,4 +38,9 @@
 }
 .modal-ctl button {
   float: right;
+}
+
+.modal-ctl button:disabled,
+.modal-ctl button:disabled:hover {
+  background-color: #868dca;
 }

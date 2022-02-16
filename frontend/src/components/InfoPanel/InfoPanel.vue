@@ -27,7 +27,6 @@
   </div>
 </template>
 <script>
-import axios from "axios";
 import Mixin from "../../mixin/mixin";
 
 export default {
@@ -37,34 +36,19 @@ export default {
   },
   data() {
     return {
-      contentDetailAPI: process.env.VUE_APP_API_BASE_URL + "/detail",
       contentPreviewAPI: process.env.VUE_APP_API_BASE_URL + "/preview",
       thisFile: "",
     };
   },
   mixins: [Mixin],
   mounted() {
-    this.getDetail();
+    this.contentDetail();
   },
   methods: {
-    async getDetail() {
-      const gt = await axios
-        .get(this.contentDetailAPI + "/" + this.thisFileId, this.axiosConfig)
-        .then((response) => {
-          return response.data.detail;
-        })
-        .catch((error) => {
-          if (error.code === "ECONNABORTED")
-            this.addNotification(408, "getDetail", "timeout.");
-          else
-            this.addNotification(
-              error.status_code,
-              "getDetail",
-              error.response.data.detail
-            );
-        });
-
-      this.thisFile = this.convertDt([gt])[0];
+    async contentDetail() {
+      this.thisFile = this.convertDt([
+        await this.getDetail(this.thisFileId),
+      ])[0];
     },
     sizeConvert(size) {
       if (size >= 1024) {
