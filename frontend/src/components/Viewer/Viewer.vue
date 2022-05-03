@@ -96,7 +96,7 @@ export default {
       previewAPI: process.env.VUE_APP_API_BASE_URL + "/preview",
       fileType: {
         video: ["mp4", "avi", "wav", "mov", "wmv"],
-        img: ["jpg", "jpeg", "png", "bmp", "gif", "svg"],
+        img: ["jpg", "jpeg", "png", "bmp", "gif", "svg", "jfif"],
       },
       thisFile: "",
       nextItem: null,
