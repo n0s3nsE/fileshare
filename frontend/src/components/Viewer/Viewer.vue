@@ -42,7 +42,7 @@
       <div class="preview-controller">
         <button
           class="preview-controller-before"
-          v-if="beforeItem"
+          :disabled="!beforeItem"
           @click="gotoBefore"
         >
           <svg
@@ -58,9 +58,12 @@
             />
           </svg>
         </button>
+        <button>
+          <p>拡大縮小のやつ</p>
+        </button>
         <button
           class="preview-controller-next"
-          v-if="nextItem"
+          :disabled="!nextItem"
           @click="gotoNext"
         >
           <svg
@@ -256,6 +259,11 @@ export default {
   background: #111111;
   text-decoration: none;
   transition: background 0.3s;
+}
+
+.preview-controller button:disabled {
+  background: #222222;
+  opacity: 0.5;
 }
 
 .preview-controller-before {
