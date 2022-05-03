@@ -26,6 +26,8 @@
         <img
           v-if="fileType.img.indexOf(paramType) > -1"
           :src="previewAPI + '/' + paramId"
+          :height="sizeInput + '%'"
+          :width="sizeInput + '%'"
         />
         <video
           controls
@@ -58,9 +60,16 @@
             />
           </svg>
         </button>
-        <button>
-          <p>拡大縮小のやつ</p>
-        </button>
+        <div class="size-ctl" @click="sizeCtlClick">
+          <p v-if="!sizeCtlClicked">{{ sizeInput }}%</p>
+          <input
+            type="text"
+            v-show="sizeCtlClicked"
+            ref="sizeCtlInput"
+            @blur="outFocus"
+            @keydown.enter="outFocus"
+          />
+        </div>
         <button
           class="preview-controller-next"
           :disabled="!nextItem"
@@ -105,6 +114,8 @@ export default {
       nextItem: null,
       beforeItem: null,
       errorFlag: false,
+      sizeCtlClicked: false,
+      sizeInput: 100,
     };
   },
   components: {
@@ -129,6 +140,10 @@ export default {
     } else {
       this.errorFlag = true;
     }
+
+    const img = new Image();
+    img.src = this.previewAPI + "/" + this.paramId;
+    console.log(img.width);
   },
   watch: {
     itemListGetters() {
@@ -176,6 +191,26 @@ export default {
     gotoNext() {
       window.location.href = `?id=${this.nextItem.id}&type=${this.nextItem.type}`;
     },
+    sizeCtlClick() {
+      this.sizeCtlClicked = true;
+      //display:noneの場合でもフォーカス出来ないため、処理を遅らせる
+      this.$nextTick(() => this.$refs.sizeCtlInput.focus());
+    },
+    outFocus() {
+      if (this.checkSizeInput(this.sizeInput)) {
+        this.sizeInput = 100;
+      } else {
+        this.sizeInput = this.$refs.sizeCtlInput.value;
+      }
+      this.sizeCtlClicked = false;
+    },
+    checkSizeInput(input) {
+      if (input.length === 0 || isNaN(input)) {
+        return false;
+      } else {
+        return true;
+      }
+    },
   },
 };
 </script>
@@ -222,6 +257,7 @@ export default {
 .preview-main {
   height: calc(100% - 56px);
   width: 80%;
+  overflow: scroll;
 }
 
 .preview-info-panel {
@@ -229,7 +265,10 @@ export default {
   width: 20%;
 }
 
-.preview-main img,
+.preview-main img {
+  object-fit: contain;
+}
+
 .preview-main video {
   height: 100%;
   width: 100%;
@@ -272,5 +311,16 @@ export default {
 
 .preview-controller-next {
   margin-right: 32px;
+}
+
+.size-ctl {
+  color: white;
+}
+.size-ctl input {
+  background-color: #222222;
+  color: white;
+  font-size: 16px;
+  height: 30px;
+  width: 60px;
 }
 </style>
