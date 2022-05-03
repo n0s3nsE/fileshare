@@ -24,8 +24,8 @@
 </template>
 
 <script>
-import axios from "axios";
 import Mixin from "../../mixin/mixin";
+import apiMixin from "../../mixin/api";
 import { VueLoading } from "vue-loading-template";
 
 export default {
@@ -36,12 +36,11 @@ export default {
     return {
       newFolderName: "",
       currentPath: "",
-      createAPI: process.env.VUE_APP_API_BASE_URL + "/create",
       isLoading: false,
       validateError: true,
     };
   },
-  mixins: [Mixin],
+  mixins: [Mixin, apiMixin],
   mounted() {
     this.currentPath = this.getPath();
   },
@@ -58,15 +57,7 @@ export default {
     async createFolder() {
       this.validateError = false;
       this.isLoading = true;
-      await axios
-        .post(
-          this.createAPI,
-          {
-            new_folder_name: this.newFolderName,
-            path: this.currentPath,
-          },
-          this.axiosConfig
-        )
+      await this.createFolderAPI(this.newFolderName, this.currentPath)
         .then((response) => {
           this.addNotification(response.status, "create");
           this.isLoading = false;

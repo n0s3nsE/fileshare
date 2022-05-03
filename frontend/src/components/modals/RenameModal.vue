@@ -23,8 +23,8 @@
   </div>
 </template>
 <script>
-import axios from "axios";
 import Mixin from "../../mixin/mixin";
+import apiMixin from "../../mixin/api";
 import { VueLoading } from "vue-loading-template";
 
 export default {
@@ -34,7 +34,6 @@ export default {
   data() {
     return {
       selectedItem: null,
-      renameAPI: process.env.VUE_APP_API_BASE_URL + "/rename",
       newName: "",
       isLoading: false,
       placeholderMsg: "",
@@ -42,7 +41,7 @@ export default {
       isFolder: false,
     };
   },
-  mixins: [Mixin],
+  mixins: [Mixin, apiMixin],
   computed: {
     selectedItemGetters() {
       return this.$store.getters.getSelectedItems[0];
@@ -77,15 +76,7 @@ export default {
     async renameItem() {
       this.selectedItem = this.selectedItemGetters;
       this.isLoading = true;
-      await axios
-        .post(
-          this.renameAPI,
-          {
-            id: this.selectedItem,
-            new_name: this.newName,
-          },
-          this.axiosConfig
-        )
+      await this.renameItemAPI(this.selectedItem, this.newName)
         .then((response) => {
           this.addNotification(response.status, "rename");
           this.isLoading = false;
