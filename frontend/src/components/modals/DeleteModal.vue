@@ -19,8 +19,8 @@
 </template>
 
 <script>
-import axios from "axios";
 import Mixin from "../../mixin/mixin";
+import apiMixin from "../../mixin/api";
 import { VueLoading } from "vue-loading-template";
 
 export default {
@@ -31,11 +31,10 @@ export default {
     return {
       selectedItems: [],
       currentPath: "",
-      deleteAPI: process.env.VUE_APP_API_BASE_URL + "/delete",
       isLoading: false,
     };
   },
-  mixins: [Mixin],
+  mixins: [Mixin, apiMixin],
   computed: {
     selectedItemsGetters() {
       return this.$store.getters.getSelectedItems;
@@ -48,14 +47,7 @@ export default {
   methods: {
     async deleteItems() {
       this.isLoading = true;
-      await axios
-        .post(
-          this.deleteAPI,
-          {
-            delete_items: this.selectedItems,
-          },
-          this.axiosConfig
-        )
+      await this.deleteItemsAPI(this.selectedItems)
         .then((response) => {
           this.addNotification(response.status, "delete");
           this.isLoading = false;

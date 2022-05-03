@@ -49,8 +49,8 @@
 </template>
 
 <script>
-import axios from "axios";
 import Mixin from "../../mixin/mixin";
+import apiMixin from "../../mixin/api";
 import { VueLoading } from "vue-loading-template";
 
 export default {
@@ -63,16 +63,14 @@ export default {
   },
   data() {
     return {
-      lockAPI: process.env.VUE_APP_API_BASE_URL + "/lock",
       isLoading: false,
     };
   },
-  mixins: [Mixin],
+  mixins: [Mixin, apiMixin],
   methods: {
     sendLockSignal() {
       this.isLoading = true;
-      axios
-        .get(this.lockAPI + "/" + this.itemId, this.axiosConfig)
+      this.sendLockSignalAPI()
         .then(() => {
           this.getItemList(this.getPath());
           this.isLoading = false;
